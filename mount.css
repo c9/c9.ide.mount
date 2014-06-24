@@ -1,0 +1,25 @@
+.mount-loading{
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.mount-loading span.loading-spinner{
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    left: 13px;
+    bottom: 15px;
+}
+
+.mount-loading label{
+    color: #f1f1f1;
+    position: absolute;
+    left: 31px;
+    bottom: 16px;
+}

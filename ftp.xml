@@ -1,0 +1,53 @@
+<a:application xmlns:a="http://ajax.org/2005/aml">
+    <a:hbox edge="5 0 0">
+        <a:label margin="5 10 0 0" width="80">Hostname</a:label>
+        <a:textbox id="tbFTPHost"
+          margin          = "0 10 0 0"
+          flex            = "1"
+          skin            = "searchbox"
+          focusselect     = "true"
+          maxlength       = "255" />
+          <!--initial-message = "ftp.example.com" />-->
+        <a:label margin="5 10 0 0">Port</a:label>
+        <a:textbox id="tbFTPPort"
+          pattern="/^\d{1,5}$/"
+          width="50"
+          skin="searchbox"
+          focusselect="true"
+          minlength="1"
+          maxlength="5"
+          value="21"
+          invalidmsg="Please enter a valid port" />
+    </a:hbox>
+    <a:hbox edge="5 0 0">
+        <a:label margin="5 10 0 0" width="80">Mount Point</a:label>
+        <a:textbox id="tbFTPMountPoint"
+          flex       = "1"
+          focusselect="true"
+          skin       = "searchbox"
+          value      = "~/mounts/" />
+    </a:hbox>
+    <a:hbox edge="5 0 0">
+        <a:label margin="5 10 0 0" width="80">Username</a:label>
+        <a:textbox id="tbFTPUser"
+          flex       = "1"
+          focusselect="true"
+          type       = "username"
+          skin       = "searchbox" />
+    </a:hbox>
+    <a:hbox edge="5 0 0">
+        <a:label margin="5 10 0 0" width="80">Password</a:label>
+        <a:secret id="tbFTPPass"
+          flex       = "1"
+          focusselect="true"
+          skin       = "searchbox" />
+    </a:hbox>
+    <a:hbox edge="5 0 0">
+        <a:label margin="5 10 0 0" width="80">Remote Path</a:label>
+        <a:textbox id="tbFTPRemote"
+          flex            = "1"
+          focusselect     = "true"
+          skin            = "searchbox"
+          value           = "/" />
+    </a:hbox>
+</a:application>
