@@ -53,7 +53,7 @@ define(function(require, exports, module) {
                 right: "0",
                 top: "-15",
                 zindex: 10,
-                style: "text-align:center",
+                style: "text-align:center;pointer-events:none",
                 childNodes: [
                     box = new ui.hbox({
                         class: "grouped_checkbox_holder with_caption",
