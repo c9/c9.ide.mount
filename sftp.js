@@ -92,7 +92,7 @@ define(function(require, exports, module) {
                 fs.mkdirP(mountpoint, function(err){ // mkdirP doesn't error when dir already exists
                     if (err) return callback(err);
                     
-                    var fuseOptions = ["auto_cache", "allow_other", "transform_symlinks"]; //"direct_io"
+                    var fuseOptions = ["auto_cache", "transform_symlinks"]; //"direct_io" "allow_other", 
                     if (c9.platform == "linux")
                         fuseOptions.push("nonempty");
                     if (args.password)
