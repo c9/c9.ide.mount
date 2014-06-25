@@ -11,7 +11,7 @@
         <a:label margin="5 10 0 0">Port</a:label>
         <a:textbox id="tbSFTPPort"
           pattern="/^\d{1,5}$/"
-          width="50"
+          width="100"
           skin="searchbox"
           focusselect="true"
           minlength="1"
