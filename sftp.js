@@ -47,12 +47,6 @@ define(function(require, exports, module) {
             tbSFTPUser = plugin.getElement("tbSFTPUser");
             tbSFTPPass = plugin.getElement("tbSFTPPass");
             tbSFTPRemote = plugin.getElement("tbSFTPRemote");
-            
-            tbSFTPHost.on("keyup", function(e){
-                if (tbSFTPMountPoint.value.indexOf("~/mounts/") === 0) {
-                    tbSFTPMountPoint.setValue("~/mounts/" + tbSFTPHost.getValue());
-                }
-            });
         }
         
         /***** Methods *****/
@@ -82,7 +76,8 @@ define(function(require, exports, module) {
                     user: tbSFTPUser.getValue(),
                     host: tbSFTPHost.getValue(),
                     remote: tbSFTPRemote.getValue(),
-                    mountpoint: tbSFTPMountPoint.getValue(),
+                    mountpoint: tbSFTPMountPoint.getValue()
+                        .replace(/<hostname>/, tbSFTPHost.getValue()),
                     password: tbSFTPPass.getValue(),
                     port: tbSFTPPort.getValue()
                 };

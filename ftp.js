@@ -46,12 +46,6 @@ define(function(require, exports, module) {
             tbFTPUser = plugin.getElement("tbFTPUser");
             tbFTPPass = plugin.getElement("tbFTPPass");
             tbFTPRemote = plugin.getElement("tbFTPRemote");
-            
-            tbFTPHost.on("keyup", function(e){
-                if (tbFTPMountPoint.value.indexOf("~/mounts/") === 0) {
-                    tbFTPMountPoint.setValue("~/mounts/" + tbFTPHost.getValue());
-                }
-            });
         }
         
         /***** Methods *****/
@@ -82,7 +76,8 @@ define(function(require, exports, module) {
                     pass: tbFTPPass.getValue(),
                     host: tbFTPHost.getValue(),
                     remote: tbFTPRemote.getValue(),
-                    mountpoint: tbFTPMountPoint.getValue(),
+                    mountpoint: tbFTPMountPoint.getValue()
+                        .replace(/<hostname>/, tbFTPHost.getValue()),
                     port: tbFTPPort.getValue()
                 };
             }

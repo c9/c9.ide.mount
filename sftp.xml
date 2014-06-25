@@ -25,7 +25,7 @@
           flex       = "1"
           focusselect="true"
           skin       = "searchbox"
-          value      = "~/mounts/" />
+          value      = "~/mounts/&amp;lt;hostname&amp;gt;" />
     </a:hbox>
     <a:hbox edge="5 0 0">
         <a:label margin="5 10 0 0" width="100">Username</a:label>

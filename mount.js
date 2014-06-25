@@ -98,8 +98,6 @@ define(function(require, exports, module) {
             
             ui.insertCss(require("text!./mount.css"), 
                 options.staticPrefix, handle);
-            
-            show();
         }
         
         /***** Methods *****/
