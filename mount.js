@@ -59,7 +59,7 @@ define(function(require, exports, module) {
                         class: "grouped_checkbox_holder with_caption",
                         align: "start",
                         height: "27",
-                        style: "display:inline-block !important"
+                        style: "display:inline-block !important;pointer-events:all"
                     })
                 ]
             });

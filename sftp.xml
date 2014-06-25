@@ -1,6 +1,6 @@
 <a:application xmlns:a="http://ajax.org/2005/aml">
     <a:hbox edge="5 0 0">
-        <a:label margin="5 10 0 0" width="80">Hostname</a:label>
+        <a:label margin="5 10 0 0" width="100">Hostname</a:label>
         <a:textbox id="tbSFTPHost"
           margin          = "0 10 0 0"
           flex            = "1"
@@ -20,7 +20,7 @@
           invalidmsg="Please enter a valid port" />
     </a:hbox>
     <a:hbox edge="5 0 0">
-        <a:label margin="5 10 0 0" width="80">Mount Point</a:label>
+        <a:label margin="5 10 0 0" width="100">Mount Point</a:label>
         <a:textbox id="tbSFTPMountPoint"
           flex       = "1"
           focusselect="true"
@@ -28,22 +28,22 @@
           value      = "~/mounts/" />
     </a:hbox>
     <a:hbox edge="5 0 0">
-        <a:label margin="5 10 0 0" width="80">Username</a:label>
+        <a:label margin="5 10 0 0" width="100">Username</a:label>
         <a:textbox id="tbSFTPUser"
           flex       = "1"
           focusselect="true"
           type       = "username"
           skin       = "searchbox" />
     </a:hbox>
-    <!--<a:hbox edge="5 0 0">-->
-    <!--    <a:label margin="5 10 0 0" width="80">Password</a:label>-->
-    <!--    <a:secret id="tbSFTPPass"-->
-    <!--      flex       = "1"-->
-    <!--      focusselect="true"-->
-    <!--      skin       = "searchbox" />-->
-    <!--</a:hbox>-->
     <a:hbox edge="5 0 0">
-        <a:label margin="5 10 0 0" width="80">Remote Path</a:label>
+        <a:label margin="5 10 0 0" width="100">Password (optional)</a:label>
+        <a:secret id="tbSFTPPass"
+          flex       = "1"
+          focusselect="true"
+          skin       = "searchbox" />
+    </a:hbox>
+    <a:hbox edge="5 0 0">
+        <a:label margin="5 10 0 0" width="100">Remote Path</a:label>
         <a:textbox id="tbSFTPRemote"
           flex            = "1"
           focusselect     = "true"

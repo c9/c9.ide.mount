@@ -45,7 +45,7 @@ define(function(require, exports, module) {
             tbSFTPPort = plugin.getElement("tbSFTPPort");
             tbSFTPMountPoint = plugin.getElement("tbSFTPMountPoint");
             tbSFTPUser = plugin.getElement("tbSFTPUser");
-            // tbSFTPPass = plugin.getElement("tbSFTPPass");
+            tbSFTPPass = plugin.getElement("tbSFTPPass");
             tbSFTPRemote = plugin.getElement("tbSFTPRemote");
         }
         
@@ -77,6 +77,7 @@ define(function(require, exports, module) {
                     host: tbSFTPHost.getValue(),
                     remote: tbSFTPRemote.getValue(),
                     mountpoint: tbSFTPMountPoint.getValue(),
+                    password: tbSFTPPass.getValue(),
                     port: tbSFTPPort.getValue()
                 };
             }
@@ -94,6 +95,8 @@ define(function(require, exports, module) {
                     var fuseOptions = ["auto_cache", "allow_other", "transform_symlinks"]; //"direct_io"
                     if (c9.platform == "linux")
                         fuseOptions.push("nonempty");
+                    if (args.password)
+                        fuseOptions.push("password_stdin");
                     
                     mnt.progress({ caption: "Mounting..." });
                     proc.spawn(SFTPFS, {
@@ -107,6 +110,9 @@ define(function(require, exports, module) {
                         ]
                     }, function(err, process){
                         if (err) return callback(err);
+                        
+                        if (args.password)
+                            process.stdin.write(args.password + "\n");
                         
                         var data = "";
                         process.stdout.on("data", function(chunk){
