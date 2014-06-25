@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
     main.consumes = [
-        "MountTab", "ui", "proc", "c9", "dialog.alert", "mount", "fs"
+        "MountTab", "ui", "proc", "c9", "mount", "fs"
     ];
     main.provides = ["mount.ftp"];
     return main;
@@ -9,7 +9,6 @@ define(function(require, exports, module) {
         var MountTab = imports.MountTab;
         var ui = imports.ui;
         var proc = imports.proc;
-        var alert = imports["dialog.alert"].show;
         var c9 = imports.c9;
         var fs = imports.fs;
         var mnt = imports.mount;
@@ -18,7 +17,7 @@ define(function(require, exports, module) {
         
         /***** Initialization *****/
         
-        var plugin = new MountTab("", "", { 
+        var plugin = new MountTab("Ajax.org", main.consumes, { 
             caption: "FTP", 
             name: "ftp", 
             index: 100
@@ -47,6 +46,12 @@ define(function(require, exports, module) {
             tbFTPUser = plugin.getElement("tbFTPUser");
             tbFTPPass = plugin.getElement("tbFTPPass");
             tbFTPRemote = plugin.getElement("tbFTPRemote");
+            
+            tbFTPHost.on("keyup", function(e){
+                if (tbFTPMountPoint.value.indexOf("~/mounts/") === 0) {
+                    tbFTPMountPoint.setValue("~/mounts/" + tbFTPHost.getValue());
+                }
+            });
         }
         
         /***** Methods *****/

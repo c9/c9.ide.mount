@@ -17,7 +17,7 @@ define(function(require, exports, module) {
         
         /***** Initialization *****/
         
-        var plugin = new MountTab("", "", { 
+        var plugin = new MountTab("Ajax.org", main.consumes, { 
             caption: "SFTP", 
             name: "sftp", 
             index: 200 
@@ -47,6 +47,12 @@ define(function(require, exports, module) {
             tbSFTPUser = plugin.getElement("tbSFTPUser");
             tbSFTPPass = plugin.getElement("tbSFTPPass");
             tbSFTPRemote = plugin.getElement("tbSFTPRemote");
+            
+            tbSFTPHost.on("keyup", function(e){
+                if (tbSFTPMountPoint.value.indexOf("~/mounts/") === 0) {
+                    tbSFTPMountPoint.setValue("~/mounts/" + tbSFTPHost.getValue());
+                }
+            });
         }
         
         /***** Methods *****/

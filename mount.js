@@ -98,6 +98,8 @@ define(function(require, exports, module) {
             
             ui.insertCss(require("text!./mount.css"), 
                 options.staticPrefix, handle);
+            
+            show();
         }
         
         /***** Methods *****/
@@ -205,6 +207,15 @@ define(function(require, exports, module) {
             });
             
             emit("activate", { section: section });
+            
+            // Focus first element
+            var nodes = section.plugin.aml.getElementsByTagName("*");
+            nodes.some(function(node){
+                if (node.focussable) {
+                    node.focus();
+                    return true;
+                }
+            });
         }
         
         function show(reset, options) {
@@ -272,8 +283,6 @@ define(function(require, exports, module) {
                     hide();
             });
             
-            addSection(options, plugin);
-            
             var drawn;
             function draw(){
                 if (drawn) return;
@@ -306,6 +315,10 @@ define(function(require, exports, module) {
             
             /***** Register and define API *****/
             
+            plugin.on("load", function(){
+                addSection(options, plugin);
+            });
+            
             plugin.freezePublicAPI.baseclass();
             
             /**
@@ -315,7 +328,7 @@ define(function(require, exports, module) {
                 /**
                  * 
                  */
-                get name(){ return name; },
+                get mountType(){ return name; },
                 
                 /**
                  * 
