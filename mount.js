@@ -152,6 +152,7 @@ define(function(require, exports, module) {
                     var favNode = favs.addFavorite(options.path, 
                         options.name + "/" + basename(options.path), true);
                     favNode.mountType = options.type;
+                    favNode.excludeFilelist = true;
                     
                     emit("mount", {});
                 }
