@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
     main.consumes = [
         "Plugin", "ui", "layout", "commands", "Dialog", "menus", 
-        "dialog.alert", "tree.favorites"
+        "dialog.alert", "tree.favorites", "tree"
     ];
     main.provides = ["mount", "MountTab"];
     return main;
@@ -10,6 +10,7 @@ define(function(require, exports, module) {
         var Plugin = imports.Plugin;
         var Dialog = imports.Dialog;
         var ui = imports.ui;
+        var tree = imports.tree;
         var commands = imports.commands;
         var menus = imports.menus;
         var favs = imports["tree.favorites"];
@@ -64,6 +65,9 @@ define(function(require, exports, module) {
                 ]
             });
             
+            ui.insertCss(require("text!./mount.css"), 
+                options.staticPrefix, handle);
+            
             options.aml.parentNode.appendChild(bar);
             
             body.html.innerHTML = '<div class="mount-loading"><span class="loading-spinner"></span><label>Mounting...</label></div>';
@@ -96,8 +100,13 @@ define(function(require, exports, module) {
                     unmount(e.node.mountType, { path: e.node.path });
             });
             
-            ui.insertCss(require("text!./mount.css"), 
-                options.staticPrefix, handle);
+            tree.getElement("mnuCtxTree", function(mnuCtxTree) {
+                ui.insertByIndex(mnuCtxTree, new ui.item({
+                    match: "",
+                    caption: "Create a Mount",
+                    command: "mount"
+                }), 1030, handle);
+            });
         }
         
         /***** Methods *****/
