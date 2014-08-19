@@ -38,6 +38,7 @@
     <a:hbox edge="5 0 0">
         <a:label margin="5 10 0 0" width="80">Password</a:label>
         <a:secret id="tbFTPPass"
+          type       = "password"
           flex       = "1"
           focusselect="true"
           skin       = "searchbox" />

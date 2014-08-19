@@ -78,7 +78,7 @@ define(function(require, exports, module) {
             
             commands.addCommand({
                 name: "mount",
-                bindKey: { mac: "Cmd-Option-B", win: "" },
+                bindKey: { mac: "Command-Option-B", win: "" },
                 exec: function(editor, args) {
                     if (args.type) {
                         mount(args.type, args);
