@@ -93,7 +93,13 @@ define(function(require, exports, module) {
                 fs.mkdirP(mountpoint, function(err){ // mkdirP doesn't error when dir already exists
                     if (err) return callback(err);
                     
-                    var fuseOptions = ["auto_cache", "transform_symlinks"]; //"direct_io" "allow_other", 
+                    var fuseOptions = [
+                        "auto_cache", 
+                        "transform_symlinks", 
+                        "StrictHostKeyChecking=no", 
+                        "PasswordAuthentication=no"
+                    ]; //"direct_io" "allow_other", 
+                    
                     if (c9.platform == "linux")
                         fuseOptions.push("nonempty");
                     if (args.password)
@@ -105,7 +111,6 @@ define(function(require, exports, module) {
                             host, 
                             mountpoint.replace(/^~/, c9.home),
                             "-o", fuseOptions.join(","),
-                            "-o", "StrictHostKeyChecking=no",
                             "-p", args.port,
                             "-C"
                         ]
