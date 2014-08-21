@@ -26,6 +26,7 @@ define(function(require, exports, module) {
             dark: true,
             title: "Mount",
             width: 400,
+            zindex: 9000,
             modal: false,
             custom: true,
             elements: [
@@ -138,9 +139,20 @@ define(function(require, exports, module) {
                 progress({ complete: true });
                 
                 if (err) {
-                    alert("Failed to create an " + section.name + " Mount",
-                        "An error occured while creating mount:",
-                        err.message);
+                    if (err.code == "EINSTALL") {
+                        alert("Failed to create an " + section.name + " Mount",
+                            "Please install the " + err.message + " package",
+                            "Install the package on an ubuntu system using "
+                                + "sudo apt-get install " + err.message 
+                                + ". For other systems check out the "
+                                + "documentation of your operating system. "
+                                + "Please try again after installing this package.");
+                    }
+                    else {
+                        alert("Failed to create an " + section.name + " Mount",
+                            "An error occured while creating mount:",
+                            err.message);
+                    }
                 }
                 else {
                     handle.hide();

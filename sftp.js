@@ -136,7 +136,11 @@ define(function(require, exports, module) {
                         process.on("exit", function(){
                             var err;
                             
-                            if (data.indexOf("No such file or directory") > -1)
+                            if (data.indexOf("execvp()") > -1) {
+                                err = new Error("sshfs");
+                                err.code = "EINSTALL";
+                            }
+                            else if (data.indexOf("No such file or directory") > -1)
                                 err = new Error("Invalid Directory: " + args.remote);
                             else if (data)
                                 err = new Error(data);
