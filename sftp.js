@@ -13,7 +13,7 @@ define(function(require, exports, module) {
         var fs = imports.fs;
         var mnt = imports.mount;
         
-        var SFTPFS = "sshfs";
+        var SFTPFS = options.sshfsBin || "sshfs";
         
         /***** Initialization *****/
         
@@ -102,8 +102,8 @@ define(function(require, exports, module) {
                     
                     if (c9.platform == "linux")
                         fuseOptions.push("nonempty");
-                    if (args.password)
-                        fuseOptions.push("password_stdin");
+                    // if (args.password)
+                    //     fuseOptions.push("password_stdin");
                     
                     mnt.progress({ caption: "Mounting..." });
                     proc.spawn(SFTPFS, {

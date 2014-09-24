@@ -13,7 +13,7 @@ define(function(require, exports, module) {
         var fs = imports.fs;
         var mnt = imports.mount;
         
-        var FTPFS = "curlftpfs";
+        var FTPFS = options.curlftpfsBin || "curlftpfs";
         
         /***** Initialization *****/
         
