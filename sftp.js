@@ -14,6 +14,7 @@ define(function(require, exports, module) {
         var mnt = imports.mount;
         
         var SFTPFS = options.sshfsBin || "sshfs";
+        var FUSERMOUNT = options.fusermountBin || "fusermount";
         
         /***** Initialization *****/
         
@@ -166,7 +167,7 @@ define(function(require, exports, module) {
         }
         
         function unmount(options, callback){
-            var PROC = c9.platform == "linux" ? "fusermount" : "umount";
+            var PROC = c9.platform == "linux" ? FUSERMOUNT : "umount";
             var path = options.path.replace(/^~/, c9.home);
             proc.execFile(PROC, { args: [path] }, function(err, stdout, stderr){
                 if ((err || stderr) && c9.platform == "darwin") {

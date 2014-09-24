@@ -14,6 +14,7 @@ define(function(require, exports, module) {
         var mnt = imports.mount;
         
         var FTPFS = options.curlftpfsBin || "curlftpfs";
+        var FUSERMOUNT = options.fusermountBin || "fusermount";
         
         /***** Initialization *****/
         
@@ -154,7 +155,7 @@ define(function(require, exports, module) {
         
         // "hard_remove"
         function unmount(options, callback){
-            var PROC = c9.platform == "linux" ? "fusermount" : "umount";
+            var PROC = c9.platform == "linux" ? FUSERMOUNT : "umount";
             var path = options.path.replace(/^~/, c9.home);
             proc.execFile(PROC, { args: [path] }, callback);
         }
