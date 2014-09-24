@@ -122,6 +122,9 @@ define(function(require, exports, module) {
                             process.stdin.write(args.password + "\n");
                         
                         var data = "";
+                        process.stdin.on("error", function(){
+                            debugger;
+                        });
                         process.stdout.on("data", function(chunk){
                             if (chunk)
                                 process.stdin.write("yes\n");
