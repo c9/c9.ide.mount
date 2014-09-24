@@ -83,7 +83,7 @@ define(function(require, exports, module) {
                 };
             }
             
-            var host = args.user + "@" + args.host +":" + args.remote;
+            var host = args.user + "@" + args.host + ":" + args.remote;
             var mountpoint = args.mountpoint;
             
             mnt.progress({ caption: "Unmounting..." });
