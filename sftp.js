@@ -103,8 +103,8 @@ define(function(require, exports, module) {
                     
                     if (c9.platform == "linux")
                         fuseOptions.push("nonempty");
-                    // if (args.password)
-                    //     fuseOptions.push("password_stdin");
+                    if (args.password)
+                        fuseOptions.push("password_stdin");
                     
                     mnt.progress({ caption: "Mounting..." });
                     proc.spawn(SFTPFS, {
@@ -120,6 +120,7 @@ define(function(require, exports, module) {
                         
                         if (args.password)
                             process.stdin.write(args.password + "\n");
+                        process.stdin.close();
                         
                         var data = "";
                         process.stdout.on("data", function(chunk){
