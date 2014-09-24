@@ -97,14 +97,15 @@ define(function(require, exports, module) {
                     var fuseOptions = [
                         "auto_cache", 
                         "transform_symlinks", 
-                        "StrictHostKeyChecking=no", 
-                        "PasswordAuthentication=no"
+                        "StrictHostKeyChecking=no"
                     ]; //"direct_io" "allow_other", 
                     
                     if (c9.platform == "linux")
                         fuseOptions.push("nonempty");
                     if (args.password)
                         fuseOptions.push("password_stdin");
+                    else
+                        fuseOptions.push("PasswordAuthentication=no");
                     
                     mnt.progress({ caption: "Mounting..." });
                     proc.spawn(SFTPFS, {
@@ -120,11 +121,11 @@ define(function(require, exports, module) {
                         
                         if (args.password)
                             process.stdin.write(args.password + "\n");
-                        process.stdin.close();
+                        process.stdin.end();
                         
                         var data = "";
                         process.stdout.on("data", function(chunk){
-                            if (chunk)
+                            if (chunk.match(/yes\/no/))
                                 process.stdin.write("yes\n");
                             else 
                                 data += chunk;
