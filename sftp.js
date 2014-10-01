@@ -74,13 +74,13 @@ define(function(require, exports, module) {
         function mount(args, callback){
             if (args.fromUI) {
                 args = {
-                    user: tbSFTPUser.getValue(),
-                    host: tbSFTPHost.getValue(),
-                    remote: tbSFTPRemote.getValue(),
-                    mountpoint: tbSFTPMountPoint.getValue()
-                        .replace(/<hostname>/, tbSFTPHost.getValue()),
-                    password: tbSFTPPass.getValue(),
-                    port: tbSFTPPort.getValue()
+                    user: tbSFTPUser.getValue().trim(),
+                    host: tbSFTPHost.getValue().trim(),
+                    remote: tbSFTPRemote.getValue().trim(),
+                    mountpoint: tbSFTPMountPoint.getValue().trim()
+                        .replace(/<hostname>/, tbSFTPHost.getValue().trim()),
+                    password: tbSFTPPass.getValue().trim(),
+                    port: tbSFTPPort.getValue().trim()
                 };
             }
             
