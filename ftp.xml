@@ -1,9 +1,18 @@
 <a:application xmlns:a="http://ajax.org/2005/aml">
     <a:hbox edge="5 0 0">
+        <a:label margin="5 10 0 0" width="80">Name</a:label>
+        <a:textbox id="tbFTPMountPoint"
+          flex       = "1"
+          focusselect="true"
+          maxheight="27"
+          skin       = "searchbox" />
+    </a:hbox>
+    <a:hbox edge="5 0 0">
         <a:label margin="5 10 0 0" width="80">Hostname</a:label>
         <a:textbox id="tbFTPHost"
           margin          = "0 10 0 0"
           flex            = "1"
+          maxheight="27"
           skin            = "searchbox"
           focusselect     = "true"
           maxlength       = "255" />
@@ -16,22 +25,16 @@
           focusselect="true"
           minlength="1"
           maxlength="5"
+          maxheight="27"
           value="21"
           invalidmsg="Please enter a valid port" />
-    </a:hbox>
-    <a:hbox edge="5 0 0">
-        <a:label margin="5 10 0 0" width="80">Mount Point</a:label>
-        <a:textbox id="tbFTPMountPoint"
-          flex       = "1"
-          focusselect="true"
-          skin       = "searchbox"
-          value      = "~/mounts/&amp;lt;hostname&amp;gt;" />
     </a:hbox>
     <a:hbox edge="5 0 0">
         <a:label margin="5 10 0 0" width="80">Username</a:label>
         <a:textbox id="tbFTPUser"
           flex       = "1"
           focusselect="true"
+          maxheight="27"
           type       = "username"
           skin       = "searchbox" />
     </a:hbox>
@@ -40,6 +43,7 @@
         <a:secret id="tbFTPPass"
           type       = "password"
           flex       = "1"
+          maxheight="27"
           focusselect="true"
           skin       = "searchbox" />
     </a:hbox>
@@ -47,6 +51,7 @@
         <a:label margin="5 10 0 0" width="80">Remote Path</a:label>
         <a:textbox id="tbFTPRemote"
           flex            = "1"
+          maxheight="27"
           focusselect     = "true"
           skin            = "searchbox"
           value           = "/" />

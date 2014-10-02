@@ -72,13 +72,15 @@ define(function(require, exports, module) {
         
         function mount(args, callback){
             if (args.fromUI) {
+                var name = tbFTPMountPoint.getValue().trim()
+                    || tbFTPHost.getValue().trim();
+                
                 args = {
                     user: tbFTPUser.getValue().trim(),
                     pass: tbFTPPass.getValue().trim(),
                     host: tbFTPHost.getValue().trim(),
                     remote: tbFTPRemote.getValue().trim(),
-                    mountpoint: tbFTPMountPoint.getValue().trim()
-                        .replace(/<hostname>/, tbFTPHost.getValue().trim()),
+                    mountpoint: "~/mounts/" + name,
                     port: tbFTPPort.getValue().trim()
                 };
             }

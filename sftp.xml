@@ -1,11 +1,20 @@
 <a:application xmlns:a="http://ajax.org/2005/aml">
     <a:hbox edge="5 0 0">
+        <a:label margin="5 10 0 0" width="100">Name</a:label>
+        <a:textbox id="tbSFTPMountPoint"
+          flex       = "1"
+          focusselect="true"
+          maxheight="27"
+          skin       = "searchbox" />
+    </a:hbox>
+    <a:hbox edge="5 0 0">
         <a:label margin="5 10 0 0" width="100">Hostname</a:label>
         <a:textbox id="tbSFTPHost"
           margin          = "0 10 0 0"
           flex            = "1"
           skin            = "searchbox"
           focusselect     = "true"
+          maxheight="27"
           maxlength       = "255" />
           <!--initial-message = "myserver.example.com" />-->
         <a:label margin="5 10 0 0">Port</a:label>
@@ -16,22 +25,16 @@
           focusselect="true"
           minlength="1"
           maxlength="5"
+          maxheight="27"
           value="22"
           invalidmsg="Please enter a valid port" />
-    </a:hbox>
-    <a:hbox edge="5 0 0">
-        <a:label margin="5 10 0 0" width="100">Mount Point</a:label>
-        <a:textbox id="tbSFTPMountPoint"
-          flex       = "1"
-          focusselect="true"
-          skin       = "searchbox"
-          value      = "~/mounts/&amp;lt;hostname&amp;gt;" />
     </a:hbox>
     <a:hbox edge="5 0 0">
         <a:label margin="5 10 0 0" width="100">Username</a:label>
         <a:textbox id="tbSFTPUser"
           flex       = "1"
           focusselect="true"
+          maxheight="27"
           type       = "username"
           skin       = "searchbox" />
     </a:hbox>
@@ -39,6 +42,7 @@
         <a:label margin="5 10 0 0" width="100">Password (optional)</a:label>
         <a:secret id="tbSFTPPass"
           flex       = "1"
+          maxheight="27"
           focusselect="true"
           skin       = "searchbox" />
     </a:hbox>
@@ -46,6 +50,7 @@
         <a:label margin="5 10 0 0" width="100">Remote Path</a:label>
         <a:textbox id="tbSFTPRemote"
           flex            = "1"
+          maxheight="27"
           focusselect     = "true"
           skin            = "searchbox"
           value           = "/" />
