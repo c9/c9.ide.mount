@@ -26,7 +26,7 @@ define(function(require, exports, module) {
             dark: true,
             title: "Mount",
             width: 400,
-            zindex: 9000,
+            zindex: 100000,
             modal: false,
             custom: true,
             elements: [
