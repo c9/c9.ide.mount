@@ -99,11 +99,15 @@ define(function(require, exports, module) {
                     var fuseOptions = [
                         "auto_cache", 
                         "transform_symlinks", 
-                        "StrictHostKeyChecking=no"
+                        "StrictHostKeyChecking=no",
+                        // Experiment to address SSHFS disconnect issue
+                        // See https://github.com/c9/newclient/issues/4752#issuecomment-59135843
+                        "reconnect",
+                        "workaround=all"
                     ]; //"direct_io" "allow_other", 
                     
-                    if (c9.platform == "linux")
-                        fuseOptions.push("nonempty");
+                    // if (c9.platform == "linux")
+                    //     fuseOptions.push("nonempty");
                     if (args.password)
                         fuseOptions.push("password_stdin");
                     else

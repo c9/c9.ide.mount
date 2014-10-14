@@ -98,8 +98,8 @@ define(function(require, exports, module) {
                     if (err) return callback(err);
                     
                     var fuseOptions = ["auto_cache", "transform_symlinks"]; //"direct_io" "allow_other", 
-                    if (c9.platform == "linux")
-                        fuseOptions.push("nonempty");
+                    // if (c9.platform == "linux")
+                    //     fuseOptions.push("nonempty");
                     
                     mnt.progress({ caption: "Mounting..." });
                     proc.spawn(FTPFS, {
