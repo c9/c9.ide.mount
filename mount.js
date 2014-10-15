@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
     main.consumes = [
         "Plugin", "ui", "layout", "commands", "Dialog", "menus", 
-        "dialog.alert", "tree.favorites", "tree"
+        "dialog.alert", "tree.favorites", "tree", "c9"
     ];
     main.provides = ["mount", "MountTab"];
     return main;
@@ -9,6 +9,7 @@ define(function(require, exports, module) {
     function main(options, imports, register) {
         var Plugin = imports.Plugin;
         var Dialog = imports.Dialog;
+        var c9 = imports.c9;
         var ui = imports.ui;
         var tree = imports.tree;
         var commands = imports.commands;
@@ -17,6 +18,7 @@ define(function(require, exports, module) {
         var alert = imports["dialog.alert"].show;
         
         var basename = require("path").basename;
+        var ENABLED = c9.location.indexOf("mount=1") > -1;
         
         /***** Initialization *****/
         
@@ -100,6 +102,8 @@ define(function(require, exports, module) {
         function load() {
             if (loaded) return false;
             loaded = true;
+            
+            if (!ENABLED) return;
             
             commands.addCommand({
                 name: "mount",
