@@ -189,7 +189,7 @@ define(function(require, exports, module) {
         function unmount(options, callback){
             var PROC = c9.platform == "linux" ? FUSERMOUNT : "umount";
             var path = options.path.replace(/^~/, c9.home);
-            proc.execFile(PROC, { args: [path] }, callback);
+            proc.execFile(PROC, { args: ["-u", "-z", path] }, callback);
         }
         
         function cancel(){
