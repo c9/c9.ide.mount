@@ -38,6 +38,8 @@ define(function(require, exports, module) {
         
         var emit = handle.getEmitter();
         
+        var CANCELERROR = -1;
+        
         var sections = []; sections.lowest = 100000;
         var body, box, active, loading;
         
@@ -74,6 +76,11 @@ define(function(require, exports, module) {
             body.html.innerHTML = '<div class="mount-loading"><span class="loading-spinner"></span><label>Mounting...</label></div>';
             loading = body.html.firstChild;
             loading.style.display = "none";
+            
+            handle.on("hide", function(){
+                loading.style.display = "none";
+                handle.update([{ id:"cancel", zindex:"" }]);
+            });
         }
         
         var loaded = false;
@@ -113,8 +120,9 @@ define(function(require, exports, module) {
         /***** Methods *****/
         
         function cancel(){
-            handle.hide(); 
-            emit("cancel", { });
+            handle.hide();
+            active.plugin.cancel();
+            emit("cancel", {});
         }
         
         function create(){
@@ -126,6 +134,8 @@ define(function(require, exports, module) {
             loading.className = "mount-loading";
             loading.style.display = options.complete ? "none" : "block";
             
+            handle.update([{ id:"cancel", zindex:10000 }]);
+            
             if (options.caption)
                 loading.lastChild.innerHTML = options.caption;
         }
@@ -133,6 +143,8 @@ define(function(require, exports, module) {
         function error(options){
             loading.className = "mount-loading error";
             loading.style.display = "block";
+            
+            handle.update([{ id:"cancel", zindex:"" }]);
             
             if (options.caption)
                 loading.lastChild.innerHTML = options.caption;
@@ -148,6 +160,9 @@ define(function(require, exports, module) {
                 progress({ complete: true });
                 
                 if (err) {
+                    if (err == CANCELERROR)
+                        return;
+                        
                     if (err.code == "EINSTALL") {
                         alert("Failed to create an " + section.name + " Mount",
                             "Please install the " + err.message + " package",
@@ -286,6 +301,27 @@ define(function(require, exports, module) {
          * 
          */
         handle.freezePublicAPI({
+            CANCELERROR: CANCELERROR,
+            
+            events: [
+                /**
+                 * 
+                 */
+                "cancel",
+                /**
+                 * 
+                 */
+                "mount",
+                /**
+                 * 
+                 */
+                "unmount",
+                /**
+                 * 
+                 */
+                "activate",
+            ],
+            
             /**
              * 
              */

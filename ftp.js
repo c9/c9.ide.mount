@@ -25,7 +25,9 @@ define(function(require, exports, module) {
         });
         // var emit = plugin.getEmitter();
         
-        var tbFTPHost, tbFTPPort, tbFTPMountPoint, tbFTPUser, tbFTPPass, tbFTPRemote;
+        var tbFTPHost, tbFTPPort, tbFTPMountPoint, tbFTPUser, tbFTPPass;
+        var tbFTPRemote;
+        var activeProcess, cancelled;
         
         var loaded = false;
         function load() {
@@ -52,12 +54,12 @@ define(function(require, exports, module) {
         /***** Methods *****/
         
         function validate(){
+            if (!tbFTPMountPoint.getValue())
+                return mnt.error({ caption: "Please enter a mount name" });
             if (!tbFTPHost.getValue()) 
                 return mnt.error({ caption: "Please enter a host or ip address" });
             if (!tbFTPPort.getValue())
                 return mnt.error({ caption: "Please enter a port" });
-            if (!tbFTPMountPoint.getValue())
-                return mnt.error({ caption: "Please enter a mount point" });
             if (!tbFTPUser.getValue())
                 return mnt.error({ caption: "Please enter the username" });
             if (!tbFTPPass.getValue())
@@ -97,6 +99,9 @@ define(function(require, exports, module) {
                 };
             }
             
+            // Reset cancelled state
+            cancelled = false;
+            
             var host = "ftp://" + args.user + ":" + args.pass 
                 + "@" + args.host + (args.port ? ":" + args.port : "")
                 + args.remote;
@@ -105,8 +110,11 @@ define(function(require, exports, module) {
             mnt.progress({ caption: "Unmounting..." });
             unmount({ path: mountpoint }, function(err){
                 
+                if (cancelled) return callback(mnt.CANCELERROR);
+                
                 mnt.progress({ caption: "Checking Mount Point..." });
                 fs.mkdirP(mountpoint, function(err){ // mkdirP doesn't error when dir already exists
+                    if (cancelled) return callback(mnt.CANCELERROR);
                     if (err) return callback(err);
                     
                     var fuseOptions = ["auto_cache", "transform_symlinks"]; //"direct_io" "allow_other", 
@@ -122,6 +130,8 @@ define(function(require, exports, module) {
                         ]
                     }, function(err, process){
                         if (err) return callback(err);
+                        
+                        activeProcess = [process, mountpoint];
                         
                         var data = "";
                         process.stdout.on("data", function(chunk){
@@ -139,6 +149,8 @@ define(function(require, exports, module) {
                         process.on("exit", function(){
                             var err;
                             
+                            activeProcess = [null, mountpoint];
+                            
                             if (data.indexOf("execvp()") > -1) {
                                 err = new Error("curlftpfs");
                                 err.code = "EINSTALL";
@@ -153,6 +165,11 @@ define(function(require, exports, module) {
                             
                             mnt.progress({ caption: "Verifying..." });
                             verify(mountpoint, function(err){
+                                activeProcess = null;
+                                
+                                if (cancelled)
+                                    return callback(mnt.CANCELERROR);
+                                
                                 if (err)
                                     return callback(err);
                                 
@@ -161,11 +178,11 @@ define(function(require, exports, module) {
                                     name: "ftp://" + host,
                                     type: "ftp"
                                 });
-                            })
+                            });
                         });
                     });
                 });
-            })
+            });
         }
         
         // "hard_remove"
@@ -173,6 +190,24 @@ define(function(require, exports, module) {
             var PROC = c9.platform == "linux" ? FUSERMOUNT : "umount";
             var path = options.path.replace(/^~/, c9.home);
             proc.execFile(PROC, { args: [path] }, callback);
+        }
+        
+        function cancel(){
+            if (!activeProcess)
+                return;
+            
+            cancelled = true;
+            
+            var process = activeProcess[0];
+            if (process) {
+                process.on("exit", function(){
+                    unmount({ path: activeProcess[1] }, function(){});
+                });
+                activeProcess[0].kill();
+            }
+            else {
+                unmount({ path: activeProcess[1] }, function(){});
+            }
         }
         
         /***** Lifecycle *****/
@@ -198,6 +233,11 @@ define(function(require, exports, module) {
              * 
              */
             validate: validate,
+            
+            /**
+             * 
+             */
+            cancel: cancel,
             
             /**
              * 

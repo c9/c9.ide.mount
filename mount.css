@@ -6,7 +6,6 @@
     right: 0;
     background: rgba(0,0,0,0.5);
     z-index: 2;
-    pointer-events: none;
 }
 
 .mount-loading span.loading-spinner{
@@ -26,6 +25,7 @@
 
 .mount-loading.error{
     background: transparent;
+    pointer-events: none;
 }
 
 .mount-loading.error span.loading-spinner{

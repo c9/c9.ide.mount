@@ -27,6 +27,7 @@ define(function(require, exports, module) {
         
         var tbSFTPHost, tbSFTPPort, tbSFTPMountPoint, tbSFTPUser, tbSFTPPass;
         var tbSFTPRemote;
+        var activeProcess, cancelled;
         
         var loaded = false;
         function load() {
@@ -53,12 +54,12 @@ define(function(require, exports, module) {
         /***** Methods *****/
         
         function validate(){
+            if (!tbSFTPMountPoint.getValue()) 
+                return mnt.error({ caption: "Please enter a mount name" });
             if (!tbSFTPHost.getValue())
                 return mnt.error({ caption: "Please enter a host or ip address" });
             if (!tbSFTPPort.getValue()) 
                 return mnt.error({ caption: "Please enter a port" });
-            if (!tbSFTPMountPoint.getValue()) 
-                return mnt.error({ caption: "Please enter a mount point" });
             if (!tbSFTPUser.getValue()) 
                 return mnt.error({ caption: "Please enter a username" });
             if (!tbSFTPRemote.getValue()) 
@@ -96,14 +97,20 @@ define(function(require, exports, module) {
                 };
             }
             
+            // Reset cancelled state
+            cancelled = false;
+            
             var host = args.user + "@" + args.host + ":" + args.remote;
             var mountpoint = args.mountpoint;
             
             mnt.progress({ caption: "Unmounting..." });
             unmount({ path: mountpoint }, function(err){
                 
+                if (cancelled) return callback(mnt.CANCELERROR);
+                
                 mnt.progress({ caption: "Checking Mount Point..." });
                 fs.mkdirP(mountpoint, function(err){ // mkdirP doesn't error when dir already exists
+                    if (cancelled) return callback(mnt.CANCELERROR);
                     if (err) return callback(err);
                     
                     var fuseOptions = [
@@ -135,6 +142,8 @@ define(function(require, exports, module) {
                     }, function(err, process){
                         if (err) return callback(err);
                         
+                        activeProcess = [process, mountpoint];
+                        
                         if (args.password)
                             process.stdin.write(args.password + "\n");
                         process.stdin.end();
@@ -155,6 +164,8 @@ define(function(require, exports, module) {
                         process.on("exit", function(){
                             var err;
                             
+                            activeProcess = [null, mountpoint];
+                            
                             if (data.indexOf("execvp()") > -1) {
                                 err = new Error("sshfs");
                                 err.code = "EINSTALL";
@@ -169,6 +180,11 @@ define(function(require, exports, module) {
                             
                             mnt.progress({ caption: "Verifying..." });
                             verify(mountpoint, function(err){
+                                activeProcess = null;
+                                
+                                if (cancelled)
+                                    return callback(mnt.CANCELERROR);
+                                
                                 if (err)
                                     return callback(err);
                                 
@@ -197,6 +213,24 @@ define(function(require, exports, module) {
             });
         }
         
+        function cancel(){
+            if (!activeProcess)
+                return;
+            
+            cancelled = true;
+            
+            var process = activeProcess[0];
+            if (process) {
+                process.on("exit", function(){
+                    unmount({ path: activeProcess[1] }, function(){});
+                });
+                activeProcess[0].kill();
+            }
+            else {
+                unmount({ path: activeProcess[1] }, function(){});
+            }
+        }
+        
         /***** Lifecycle *****/
         
         plugin.on("draw", function(e){
@@ -220,6 +254,11 @@ define(function(require, exports, module) {
              * 
              */
             validate: validate,
+            
+            /**
+             * 
+             */
+            cancel: cancel,
             
             /**
              * 
