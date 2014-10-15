@@ -53,6 +53,16 @@ define(function(require, exports, module) {
         /***** Methods *****/
         
         function validate(){
+            if (!tbSFTPHost.getValue())
+                return mnt.error({ caption: "Please enter a host or ip address" });
+            if (!tbSFTPPort.getValue()) 
+                return mnt.error({ caption: "Please enter a port" });
+            if (!tbSFTPMountPoint.getValue()) 
+                return mnt.error({ caption: "Please enter a mount point" });
+            if (!tbSFTPUser.getValue()) 
+                return mnt.error({ caption: "Please enter a username" });
+            if (!tbSFTPRemote.getValue()) 
+                return mnt.error({ caption: "Please enter the remote dir" });
             return true;
         }
         

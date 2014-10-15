@@ -52,6 +52,18 @@ define(function(require, exports, module) {
         /***** Methods *****/
         
         function validate(){
+            if (!tbFTPHost.getValue()) 
+                return mnt.error({ caption: "Please enter a host or ip address" });
+            if (!tbFTPPort.getValue())
+                return mnt.error({ caption: "Please enter a port" });
+            if (!tbFTPMountPoint.getValue())
+                return mnt.error({ caption: "Please enter a mount point" });
+            if (!tbFTPUser.getValue())
+                return mnt.error({ caption: "Please enter the username" });
+            if (!tbFTPPass.getValue())
+                return mnt.error({ caption: "Please enter the password" });
+            if (!tbFTPRemote.getValue())
+                return mnt.error({ caption: "Please enter the remote dir" });
             return true;
         }
         

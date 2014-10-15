@@ -23,3 +23,16 @@
     left: 31px;
     bottom: 16px;
 }
+
+.mount-loading.error{
+    background: transparent;
+}
+
+.mount-loading.error span.loading-spinner{
+    display: none;
+}
+
+.mount-loading.error label{
+    left: 13px;
+    color: rgb(255, 123, 123);
+}

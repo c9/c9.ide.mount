@@ -123,7 +123,16 @@ define(function(require, exports, module) {
         }
         
         function progress(options){
+            loading.className = "mount-loading";
             loading.style.display = options.complete ? "none" : "block";
+            
+            if (options.caption)
+                loading.lastChild.innerHTML = options.caption;
+        }
+        
+        function error(options){
+            loading.className = "mount-loading error";
+            loading.style.display = "block";
             
             if (options.caption)
                 loading.lastChild.innerHTML = options.caption;
@@ -285,7 +294,12 @@ define(function(require, exports, module) {
             /**
              * 
              */
-            progress: progress
+            progress: progress,
+            
+            /**
+             * 
+             */
+            error: error
         });
         
         function MountTab(developer, consumes, options) {
