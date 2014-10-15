@@ -75,7 +75,7 @@ define(function(require, exports, module) {
             
             proc.execFile("mount", {}, function(err, stdout, stderr){
                 if (!err && stdout.indexOf(path) == -1) {
-                    if (++retries < 10)
+                    if (retries != -1 && ++retries < 10)
                         return setTimeout(verify.bind(null, path, callback, retries), 100);
                     
                     err = new Error("Mount is not found: " + path);
@@ -176,7 +176,8 @@ define(function(require, exports, module) {
                                 callback(null, {
                                     path: mountpoint,
                                     name: "ftp://" + host.replace(/^.*@/, ""),
-                                    type: "ftp"
+                                    type: "ftp",
+                                    args: args
                                 });
                             });
                         });
@@ -233,6 +234,11 @@ define(function(require, exports, module) {
              * 
              */
             validate: validate,
+            
+            /**
+             * 
+             */
+            verify: verify,
             
             /**
              * 

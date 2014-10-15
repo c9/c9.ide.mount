@@ -191,7 +191,8 @@ define(function(require, exports, module) {
                                 callback(null, {
                                     path: mountpoint,
                                     name: "sftp://" + host,
-                                    type: "sftp"
+                                    type: "sftp",
+                                    args: args
                                 });
                             })
                         });
@@ -254,6 +255,11 @@ define(function(require, exports, module) {
              * 
              */
             validate: validate,
+            
+            /**
+             * 
+             */
+            verify: verify,
             
             /**
              * 

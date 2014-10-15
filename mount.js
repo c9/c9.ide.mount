@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
     main.consumes = [
         "Plugin", "ui", "layout", "commands", "Dialog", "menus", 
-        "dialog.alert", "tree.favorites", "tree", "c9"
+        "dialog.alert", "tree.favorites", "tree", "c9", "fs.cache"
     ];
     main.provides = ["mount", "MountTab"];
     return main;
@@ -15,6 +15,7 @@ define(function(require, exports, module) {
         var commands = imports.commands;
         var menus = imports.menus;
         var favs = imports["tree.favorites"];
+        var fsCache = imports["fs.cache"];
         var alert = imports["dialog.alert"].show;
         
         var basename = require("path").basename;
@@ -43,6 +44,7 @@ define(function(require, exports, module) {
         var CANCELERROR = -1;
         
         var sections = []; sections.lowest = 100000;
+        var mounting = {};
         var body, box, active, loading;
         
         var drawn = false;
@@ -125,6 +127,30 @@ define(function(require, exports, module) {
                     unmount(e.node.mountType, { path: e.node.path });
             });
             
+            fsCache.on("readdir", function(e){
+                var node = favs.isFavoritePath(e.path);
+                if (node && node.mountType) {
+                    if (!Object.keys(e.parent.map).length) {
+                        var options = node.mountOptions;
+                        var plugin = (sections[node.mountType] || 1).plugin;
+                        if (!plugin) return; // Do Nothing
+                        
+                        plugin.verify(options.mountpoint, function(err){
+                            if (!err) return;
+                            
+                            // Mount doesn't exist anymore, let's create it
+                            mount(node.mountType, options, false, function(err){
+                                if (err) return;
+                                
+                                tree.refresh([node], function(){
+                                    tree.expand(node);
+                                });
+                            }, true); // This is a remount
+                        }, -1); // Only test once
+                    }
+                }
+            });
+            
             // tree.getElement("mnuCtxTree", function(mnuCtxTree) {
             //     ui.insertByIndex(mnuCtxTree, new ui.item({
             //         match: "",
@@ -148,6 +174,8 @@ define(function(require, exports, module) {
         }
         
         function progress(options){
+            if (!loading) return;
+            
             loading.className = "mount-loading";
             loading.style.display = options.complete ? "none" : "block";
             
@@ -167,21 +195,33 @@ define(function(require, exports, module) {
                 loading.lastChild.innerHTML = options.caption;
         }
         
-        function mount(type, args, isActive){
+        function mount(type, args, isActive, callback, remount){
             var section = isActive ? active : sections[type]; 
             var plugin = section.plugin;
             
+            if (!args)
+                args = { fromUI : true };
+            else if (mounting[args.mountpoint])
+                return done(new Error("Already mounting this mountpoint"));
+            
+            mounting[args.mountpoint] = true;
             progress({ caption: "Mounting..." });
             
-            plugin.mount(args || { fromUI : true }, function(err, options){
+            function done(err){
+                delete mounting[args.mountpoint];
+                callback && callback(err)
+            }
+            
+            plugin.mount(args, function(err, options){
                 progress({ complete: true });
                 
                 if (err) {
                     if (err == CANCELERROR)
-                        return;
-                        
+                        return done(err);
+                    
+                    var word = remount ? "refresh" : "create";
                     if (err.code == "EINSTALL") {
-                        alert("Failed to create an " + section.name + " Mount",
+                        alert("Failed to " + word + " an " + section.name + " Mount",
                             "Please install the " + err.message + " package",
                             "Install the package on an ubuntu system using "
                                 + "sudo apt-get install " + err.message 
@@ -190,40 +230,55 @@ define(function(require, exports, module) {
                                 + "Please try again after installing this package.");
                     }
                     else {
-                        alert("Failed to create an " + section.name + " Mount",
+                        alert("Failed to " + word + " an " + section.name + " Mount",
                             "An error occured while creating mount:",
                             err.message);
                     }
                 }
                 else {
-                    handle.hide();
-                    
-                    // Clean up any old favorite
-                    favs.removeFavorite(options.path);
-                    
-                    // Create new favorite to mount point
-                    var favNode = favs.addFavorite(options.path, 
-                        options.name + "/" + basename(options.path), true);
-                    favNode.mountType = options.type;
-                    favNode.excludeFilelist = true;
+                    if (!remount) {
+                        handle.hide();
+                        
+                        // Clean up any old favorite
+                        favs.removeFavorite(options.path);
+                        
+                        // Create new favorite to mount point
+                        var favNode = favs.addFavorite(options.path, 
+                            options.name + "/" + basename(options.path), true);
+                        favNode.mountType = options.type;
+                        favNode.mountOptions = options.args;
+                        favNode.excludeFilelist = true;
+                    }
                     
                     emit("mount", {});
                 }
+                
+                done(err);
             });
         }
         
-        function unmount(type, args, isActive){
+        function unmount(type, args, isActive, callback){
             var plugin = isActive ? active.plugin : sections[type].plugin;
             
             plugin.unmount(args, function(){
                 handle.hide();
                 emit("unmount", {});
+                callback && callback();
             });
         }
         
-        function addSection(options, plugin){
+        function addSection(options, plugin, section){
+            if (!section) {
+                section = {
+                    name: options.name || options.caption,
+                    plugin: plugin
+                };
+                sections.push(section)
+                sections[section.name] = section;
+            };
+            
             if (!drawn) {
-                handle.on("draw", addSection.bind(null, options, plugin));
+                handle.on("draw", addSection.bind(null, options, plugin, section));
                 return;
             }
             
@@ -238,13 +293,7 @@ define(function(require, exports, module) {
             
             ui.insertByIndex(box, btn, options.index, plugin);
             
-            var section = {
-                button: btn,
-                name: options.name || options.caption,
-                plugin: plugin
-            };
-            sections.push(section)
-            sections[section.name] = section;
+            section.button = btn;
             
             if (options.index < sections.lowest) {
                 sections.lowest = options.index;
@@ -261,6 +310,7 @@ define(function(require, exports, module) {
             active = section;
             
             sections.forEach(function(s){
+                if (!s.button) return;
                 if (s != section)
                     s.button.uncheck();
                 else
