@@ -101,13 +101,13 @@ define(function(require, exports, module) {
                     unmount(e.node.mountType, { path: e.node.path });
             });
             
-            tree.getElement("mnuCtxTree", function(mnuCtxTree) {
-                ui.insertByIndex(mnuCtxTree, new ui.item({
-                    match: "",
-                    caption: "Create a Mount",
-                    command: "mount"
-                }), 1030, handle);
-            });
+            // tree.getElement("mnuCtxTree", function(mnuCtxTree) {
+            //     ui.insertByIndex(mnuCtxTree, new ui.item({
+            //         match: "",
+            //         caption: "Create a Mount",
+            //         command: "mount"
+            //     }), 1030, handle);
+            // });
         }
         
         /***** Methods *****/
