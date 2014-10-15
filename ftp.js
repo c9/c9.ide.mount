@@ -146,7 +146,8 @@ define(function(require, exports, module) {
                                 
                                 callback(null, {
                                     path: mountpoint,
-                                    name: "ftp://" + host
+                                    name: "ftp://" + host,
+                                    type: "ftp"
                                 });
                             })
                         });
