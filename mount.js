@@ -85,19 +85,6 @@ define(function(require, exports, module) {
                 loading.style.display = "none";
                 handle.update([{ id:"cancel", zindex:"" }]);
             });
-            
-            tree.on("menuUpdate", function(e){
-                var caption = e.node && e.node.mountType
-                    ? "Remove Mount"
-                    : "Remove from Favorites";
-                    
-                e.menu.childNodes.some(function(item) {
-                    if (item.command == "removefavorite") {
-                        item.setAttribute("caption", caption);
-                        return true;
-                    }
-                });
-            });
         }
         
         var loaded = false;
@@ -149,6 +136,19 @@ define(function(require, exports, module) {
                         }, -1); // Only test once
                     }
                 }
+            });
+            
+            tree.on("menuUpdate", function(e){
+                var caption = e.node && e.node.mountType
+                    ? "Remove Mount"
+                    : "Remove from Favorites";
+                    
+                e.menu.childNodes.some(function(item) {
+                    if (item.command == "removefavorite") {
+                        item.setAttribute("caption", caption);
+                        return true;
+                    }
+                });
             });
             
             // tree.getElement("mnuCtxTree", function(mnuCtxTree) {
