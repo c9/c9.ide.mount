@@ -36,3 +36,7 @@
     left: 13px;
     color: rgb(255, 123, 123);
 }
+
+.mount-container{
+    padding: @mount-container-padding;
+}

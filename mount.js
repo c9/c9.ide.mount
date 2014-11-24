@@ -30,7 +30,7 @@ define(function(require, exports, module) {
             title: "Mount",
             width: 400,
             zindex: 100000,
-            modal: false,
+            modal: true,
             custom: true,
             elements: [
                 { type: "filler" },
@@ -64,7 +64,7 @@ define(function(require, exports, module) {
                 style: "text-align:center;pointer-events:none",
                 childNodes: [
                     box = new ui.hbox({
-                        class: "grouped_checkbox_holder with_caption",
+                        class: "grouped_checkbox_holder with_caption mount",
                         align: "start",
                         height: "27",
                         style: "display:inline-block !important;pointer-events:all"
@@ -431,7 +431,7 @@ define(function(require, exports, module) {
                     container.parentNode.removeChild(container);
                 });
                 
-                container.style.padding = "18px 10px 12px 10px";
+                container.className = "basic mount-container";
                 
                 emit.sticky("draw", { html: container, aml: aml });
             }
