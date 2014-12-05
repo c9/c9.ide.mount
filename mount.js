@@ -19,7 +19,7 @@ define(function(require, exports, module) {
         var alert = imports["dialog.alert"].show;
         
         var basename = require("path").basename;
-        var ENABLED = c9.location.indexOf("mount=1") > -1;
+        var ENABLED = c9.location.indexOf("mount=0") == -1;
         
         /***** Initialization *****/
         
