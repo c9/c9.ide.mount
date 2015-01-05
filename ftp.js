@@ -99,6 +99,10 @@ define(function(require, exports, module) {
                 };
             }
             
+            //Encode "@" as curlftpfs doesn't likes it raw.
+            args.pass = args.pass.replace(/@/g, "%40")
+            args.user = args.user.replace(/@/g, "%40")
+            
             // Reset cancelled state
             cancelled = false;
             
