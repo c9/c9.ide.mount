@@ -100,8 +100,8 @@ define(function(require, exports, module) {
             }
             
             //Encode "@" as curlftpfs doesn't likes it raw.
-            args.pass = args.pass.replace(/@/g, "%40")
-            args.user = args.user.replace(/@/g, "%40")
+            args.pass = args.pass.replace(/@/g, "%40");
+            args.user = args.user.replace(/@/g, "%40");
             
             // Reset cancelled state
             cancelled = false;
@@ -132,25 +132,25 @@ define(function(require, exports, module) {
                             mountpoint.replace(/^~/, c9.home),
                             "-o", fuseOptions.join(",")
                         ]
-                    }, function(err, process){
+                    }, function(err, child){
                         if (err) return callback(err);
                         
-                        activeProcess = [process, mountpoint];
+                        activeProcess = [child, mountpoint];
                         
                         var data = "";
-                        process.stdout.on("data", function(chunk){
-                            if (chunk)
-                                process.stdin.write("yes\n");
-                            else 
-                                data += chunk;
-                        });
-                        process.stderr.on("data", function(chunk){
+                        child.stdout.on("data", function(chunk){
                             if (chunk.match(/yes\/no/))
-                                process.stdin.write("yes\n");
+                                child.stdin.write("yes\n");
                             else 
                                 data += chunk;
                         });
-                        process.on("exit", function(){
+                        child.stderr.on("data", function(chunk){
+                            if (chunk.match(/yes\/no/))
+                                child.stdin.write("yes\n");
+                            else 
+                                data += chunk;
+                        });
+                        child.on("exit", function(){
                             var err;
                             
                             activeProcess = [null, mountpoint];
