@@ -229,9 +229,14 @@ define(function(require, exports, module) {
                                 + "documentation of your operating system. "
                                 + "Please try again after installing this package.");
                     }
+                    else if (err.code == "EACCESS") {
+                        alert("Failed to " + word.toUpperCase() + " an " + section.name.toUpperCase() + " Mount",
+                            "Please verify your Username/Password",
+                            err.message);
+                    }
                     else {
-                        alert("Failed to " + word + " an " + section.name + " Mount",
-                            "An error occured while creating mount:",
+                        alert("Failed to " + word.toUpperCase() + " an " + section.name.toUpperCase() + " Mount",
+                            "An error occurred while creating the mount:",
                             err.message);
                     }
                 }

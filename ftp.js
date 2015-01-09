@@ -161,6 +161,11 @@ define(function(require, exports, module) {
                             }
                             else if (data.indexOf("No such file or directory") > -1)
                                 err = new Error("Invalid Directory: " + args.remote);
+                            
+                            else if (data.indexOf("Access denied") > -1) {
+                                err = new Error("Authentication Failed : " + data);
+                                err.code = "EACCESS";
+                            }
                             else if (data)
                                 err = new Error(data);
                             
