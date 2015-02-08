@@ -9,16 +9,14 @@
         "url": "http://github.com/c9/c9.ide.mount.git"
     },
     "plugins": {
-        "plugin": {
-            "ftp": {},
-            "mount": {},
-            "sftp": {}
-        }
+        "ftp": {},
+        "mount": {},
+        "sftp": {}
     },
     "categories": [
         "core"
     ],
     "licenses": [
-        ""
+        "MIT"
     ]
 }
