@@ -31,7 +31,6 @@ define(function(require, exports, module) {
             width: 400,
             zindex: 100000,
             modal: true,
-            custom: true,
             elements: [
                 { type: "filler" },
                 { type: "button", id: "cancel", caption: "Cancel", onclick: cancel },
