@@ -45,16 +45,14 @@ define(function(require, exports, module) {
         
         var sections = []; sections.lowest = 100000;
         var mounting = {};
-        var body, box, active, loading;
+        var container, box, active, loading;
         
         var drawn = false;
         function draw(options) {
             if (drawn) return;
             drawn = true;
             
-            body = { html: document.createElement("div") };
-            var pNode = options.html.parentNode;
-            pNode.replaceChild(body.html, options.html);
+            container = options.html;
             
             var bar = new ui.bar({
                 left: "0",
@@ -77,8 +75,8 @@ define(function(require, exports, module) {
             
             options.aml.parentNode.appendChild(bar);
             
-            body.html.innerHTML = '<div class="mount-loading"><span class="loading-spinner"></span><label>Mounting...</label></div>';
-            loading = body.html.firstChild;
+            container.innerHTML = '<div class="mount-loading"><span class="loading-spinner"></span><label>Mounting...</label></div>';
+            loading = container.firstChild;
             loading.style.display = "none";
             
             handle.on("hide", function(){
@@ -415,7 +413,7 @@ define(function(require, exports, module) {
             var emit = plugin.getEmitter();
             
             var name = options.name || options.caption;
-            var container, aml;
+            var htmlPage, aml;
             
             // Create UI Button
             handle.on("activate", function(e){
@@ -430,29 +428,29 @@ define(function(require, exports, module) {
                 if (drawn) return;
                 drawn = true;
                 
-                aml = new ui.bar({ htmlNode: body.html });
-                container = aml.$ext;
+                aml = new ui.bar({ htmlNode: container });
+                htmlPage = aml.$ext;
                 plugin.addOther(function(){
-                    container.parentNode.removeChild(container);
+                    htmlPage.parentNode.removeChild(htmlPage);
                 });
                 
-                container.className = "basic mount-container";
+                htmlPage.className = "basic mount-container";
                 
-                emit.sticky("draw", { html: container, aml: aml });
+                emit.sticky("draw", { html: htmlPage, aml: aml });
             }
             
             /***** Methods *****/
             
             function hide(){
-                if (!drawn || !container.parentNode) 
+                if (!drawn || !htmlPage.parentNode) 
                     return;
                     
-                container.parentNode.removeChild(container);
+                htmlPage.parentNode.removeChild(htmlPage);
             }
             
             function show(options) {
                 draw();
-                body.html.appendChild(container);
+                container.appendChild(htmlPage);
             }
             
             /***** Register and define API *****/
@@ -480,7 +478,7 @@ define(function(require, exports, module) {
                 /**
                  * 
                  */
-                get container(){ return container; },
+                get container(){ return htmlPage; },
                 
                 /**
                  * 
