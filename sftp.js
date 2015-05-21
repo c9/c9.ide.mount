@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
     main.consumes = [
-        "MountTab", "ui", "proc", "c9", "fs", "mount"
+        "MountTab", "ui", "proc", "c9", "fs", "mount", "metrics", "c9.analytics"
     ];
     main.provides = ["mount.sftp"];
     return main;
@@ -12,6 +12,8 @@ define(function(require, exports, module) {
         var c9 = imports.c9;
         var fs = imports.fs;
         var mnt = imports.mount;
+        var metrics = imports.metrics;
+        var analytics = imports["c9.analytics"];
         
         var SFTPFS = options.sshfsBin || "sshfs";
         var FUSERMOUNT = options.fusermountBin || "fusermount";
@@ -189,9 +191,16 @@ define(function(require, exports, module) {
                                 if (cancelled)
                                     return callback(mnt.CANCELERROR);
                                 
-                                if (err)
+                                if (err) {
+                                    metrics.log("mount.sftp.failed");
                                     return callback(err);
+                                }
                                 
+                                metrics.log("mount.sftp");
+                                analytics.log("Mounted sftp volume", {
+                                    path: mountpoint,
+                                    host: host
+                                });
                                 callback(null, {
                                     path: mountpoint,
                                     name: "sftp://" + host,
@@ -206,6 +215,9 @@ define(function(require, exports, module) {
         }
         
         function unmount(options, callback){
+            analytics.log("Unmounted sftp volume", {
+                path: path
+            });
             var PROC = c9.platform == "linux" ? FUSERMOUNT : "umount";
             var path = options.path.replace(/^~/, c9.home);
             proc.execFile(PROC, { args: ["-u", "-z", path] }, function(err, stdout, stderr){

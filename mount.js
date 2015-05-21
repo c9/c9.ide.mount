@@ -1,7 +1,8 @@
 define(function(require, exports, module) {
     main.consumes = [
         "Plugin", "ui", "layout", "commands", "Dialog", "menus", 
-        "dialog.alert", "tree.favorites", "tree", "c9", "fs.cache"
+        "dialog.alert", "tree.favorites", "tree", "c9", "fs.cache",
+        "metrics", "c9.analytics"
     ];
     main.provides = ["mount", "MountTab"];
     return main;
@@ -17,6 +18,8 @@ define(function(require, exports, module) {
         var favs = imports["tree.favorites"];
         var fsCache = imports["fs.cache"];
         var alert = imports["dialog.alert"].show;
+        var metrics = imports.metrics;
+        var analytics = imports["c9.analytics"];
         
         var basename = require("path").basename;
         var ENABLED = c9.location.indexOf("mount=0") == -1;
@@ -206,7 +209,7 @@ define(function(require, exports, module) {
             
             function done(err){
                 delete mounting[args.mountpoint];
-                callback && callback(err)
+                callback && callback(err);
             }
             
             plugin.mount(args, function(err, options){
@@ -332,6 +335,8 @@ define(function(require, exports, module) {
         }
         
         function show(reset, options) {
+            analytics.log("Opened mount dialog");
+            
             if (!options)
                 options = {};
             
