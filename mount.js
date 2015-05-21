@@ -105,7 +105,7 @@ define(function(require, exports, module) {
                 }
             }, handle);
             
-            menus.addItemByPath("File/Mount FTP or SFTP server", new ui.item({
+            menus.addItemByPath("File/Mount FTP or SFTP server...", new ui.item({
                 command: "mount"
             }), 1250, handle);
             
