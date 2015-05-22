@@ -182,16 +182,8 @@ define(function(require, exports, module) {
                                     return callback(mnt.CANCELERROR);
                                 }
                                 
-                                if (err) {
-                                    metrics.log("mount.ftp.failed");
-                                    return callback(err);
-                                }
+                                if (err) return callback(err);
                                 
-                                metrics.log("mount.ftp");
-                                analytics.log("Mounted ftp volume", {
-                                    path: mountpoint,
-                                    host: host
-                                });
                                 callback(null, {
                                     path: mountpoint,
                                     name: "ftp://" + host.replace(/^.*@/, ""),

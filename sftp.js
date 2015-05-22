@@ -191,16 +191,8 @@ define(function(require, exports, module) {
                                 if (cancelled)
                                     return callback(mnt.CANCELERROR);
                                 
-                                if (err) {
-                                    metrics.log("mount.sftp.failed");
-                                    return callback(err);
-                                }
+                                if (err) return callback(err);
                                 
-                                metrics.log("mount.sftp");
-                                analytics.log("Mounted sftp volume", {
-                                    path: mountpoint,
-                                    host: host
-                                });
                                 callback(null, {
                                     path: mountpoint,
                                     name: "sftp://" + host,

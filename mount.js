@@ -235,6 +235,7 @@ define(function(require, exports, module) {
                             err.message);
                     }
                     else {
+                        metrics.increment("mount.failed");
                         alert("Failed to " + word.toUpperCase() + " an " + section.name.toUpperCase() + " Mount",
                             "An error occurred while creating the mount:",
                             err.message);
@@ -254,6 +255,12 @@ define(function(require, exports, module) {
                         favNode.mountOptions = options.args;
                         favNode.excludeFilelist = true;
                     }
+                    
+                    metrics.increment("mount");
+                    analytics.log("Mounted volume", {
+                        path: options.path,
+                        type: options.type
+                    });
                     
                     emit("mount", {});
                 }
