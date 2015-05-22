@@ -221,6 +221,7 @@ define(function(require, exports, module) {
                     
                     var word = remount ? "refresh" : "create";
                     if (err.code == "EINSTALL") {
+                        analytics.log("Was asked to install package before mounting");
                         alert("Failed to " + word + " an " + section.name + " Mount",
                             "Please install the " + err.message + " package",
                             "Install the package on an ubuntu system using "
