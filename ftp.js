@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
     main.consumes = [
-        "MountTab", "ui", "proc", "c9", "mount", "fs", "error_handler"
+        "MountTab", "ui", "proc", "c9", "mount", "fs", "metrics", "c9.analytics", "error_handler"
     ];
     main.provides = ["mount.ftp"];
     return main;
@@ -13,6 +13,8 @@ define(function(require, exports, module) {
         var fs = imports.fs;
         var mnt = imports.mount;
         var errorHandler = imports.error_handler;
+        var metrics = imports.metrics;
+        var analytics = imports["c9.analytics"];
         
         var FTPFS = options.curlftpfsBin || "curlftpfs";
         var FUSERMOUNT = options.fusermountBin || "fusermount";
@@ -178,11 +180,11 @@ define(function(require, exports, module) {
                             verify(mountpoint, function(err){
                                 activeProcess = null;
                                 
-                                if (cancelled)
+                                if (cancelled) {
                                     return callback(mnt.CANCELERROR);
+                                }
                                 
-                                if (err)
-                                    return callback(err);
+                                if (err) return callback(err);
                                 
                                 callback(null, {
                                     path: mountpoint,
@@ -199,6 +201,9 @@ define(function(require, exports, module) {
         
         // "hard_remove"
         function unmount(options, callback){
+            analytics.log("Unmounted sftp volume", {
+                path: path
+            });
             var PROC = c9.platform == "linux" ? FUSERMOUNT : "umount";
             var path = options.path.replace(/^~/, c9.home);
             proc.execFile(PROC, { args: ["-u", "-z", path] }, callback);

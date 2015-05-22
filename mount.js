@@ -2,7 +2,7 @@ define(function(require, exports, module) {
     main.consumes = [
         "Plugin", "ui", "layout", "commands", "Dialog", "menus", 
         "dialog.alert", "tree.favorites", "tree", "c9", "fs.cache",
-        "error_handler"
+        "metrics", "c9.analytics", "error_handler"
     ];
     main.provides = ["mount", "MountTab"];
     return main;
@@ -19,7 +19,8 @@ define(function(require, exports, module) {
         var fsCache = imports["fs.cache"];
         var alert = imports["dialog.alert"].show;
         var errorHandler = imports.error_handler;
-        
+        var metrics = imports.metrics;
+        var analytics = imports["c9.analytics"];
         var basename = require("path").basename;
         var ENABLED = c9.location.indexOf("mount=0") == -1;
         
@@ -104,7 +105,7 @@ define(function(require, exports, module) {
                 }
             }, handle);
             
-            menus.addItemByPath("File/Mount FTP or SFTP server", new ui.item({
+            menus.addItemByPath("File/Mount FTP or SFTP server...", new ui.item({
                 command: "mount"
             }), 1250, handle);
             
@@ -208,7 +209,7 @@ define(function(require, exports, module) {
             
             function done(err){
                 delete mounting[args.mountpoint];
-                callback && callback(err)
+                callback && callback(err);
             }
             
             plugin.mount(args, function(err, options){
@@ -222,6 +223,7 @@ define(function(require, exports, module) {
                     
                     var word = remount ? "refresh" : "create";
                     if (err.code == "EINSTALL") {
+                        analytics.log("Was asked to install package before mounting");
                         alert("Failed to " + word + " an " + section.name + " Mount",
                             "Please install the " + err.message + " package",
                             "Install the package on an ubuntu system using "
@@ -236,6 +238,7 @@ define(function(require, exports, module) {
                             err.message);
                     }
                     else {
+                        metrics.increment("mount.failed");
                         alert("Failed to " + word.toUpperCase() + " an " + section.name.toUpperCase() + " Mount",
                             "An error occurred while creating the mount:",
                             err.message);
@@ -255,6 +258,12 @@ define(function(require, exports, module) {
                         favNode.mountOptions = options.args;
                         favNode.excludeFilelist = true;
                     }
+                    
+                    metrics.increment("mount");
+                    analytics.log("Mounted volume", {
+                        path: options.path,
+                        type: options.type
+                    });
                     
                     emit("mount", {});
                 }
@@ -336,6 +345,8 @@ define(function(require, exports, module) {
         }
         
         function show(reset, options) {
+            analytics.log("Opened mount dialog");
+            
             if (!options)
                 options = {};
             
