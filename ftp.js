@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
     main.consumes = [
-        "MountTab", "ui", "proc", "c9", "mount", "fs"
+        "MountTab", "ui", "proc", "c9", "mount", "fs", "error_handler"
     ];
     main.provides = ["mount.ftp"];
     return main;
@@ -12,6 +12,7 @@ define(function(require, exports, module) {
         var c9 = imports.c9;
         var fs = imports.fs;
         var mnt = imports.mount;
+        var errorHandler = imports.error_handler;
         
         var FTPFS = options.curlftpfsBin || "curlftpfs";
         var FUSERMOUNT = options.fusermountBin || "fusermount";
@@ -78,7 +79,8 @@ define(function(require, exports, module) {
                     if (retries != -1 && ++retries < 10)
                         return setTimeout(verify.bind(null, path, callback, retries), 100);
                     
-                    err = new Error("Mount is not found: " + path);
+                    errorHandler.log(new Error("User failed to create mount"), {path: path, mounts: stdout});
+                    err = new Error("Mount did not initialize correctly");
                 }
                 callback(err);
             });
@@ -124,12 +126,12 @@ define(function(require, exports, module) {
                     var fuseOptions = ["auto_cache", "transform_symlinks"]; //"direct_io" "allow_other", 
                     // if (c9.platform == "linux")
                     //     fuseOptions.push("nonempty");
-                    
+                    mountpoint.replace(/^~/, c9.home);
                     mnt.progress({ caption: "Mounting..." });
                     proc.spawn(FTPFS, {
                         args: [
                             host, 
-                            mountpoint.replace(/^~/, c9.home),
+                            mountpoint, 
                             "-o", fuseOptions.join(",")
                         ]
                     }, function(err, child){

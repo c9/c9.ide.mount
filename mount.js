@@ -1,7 +1,8 @@
 define(function(require, exports, module) {
     main.consumes = [
         "Plugin", "ui", "layout", "commands", "Dialog", "menus", 
-        "dialog.alert", "tree.favorites", "tree", "c9", "fs.cache"
+        "dialog.alert", "tree.favorites", "tree", "c9", "fs.cache",
+        "error_handler"
     ];
     main.provides = ["mount", "MountTab"];
     return main;
@@ -17,6 +18,7 @@ define(function(require, exports, module) {
         var favs = imports["tree.favorites"];
         var fsCache = imports["fs.cache"];
         var alert = imports["dialog.alert"].show;
+        var errorHandler = imports.error_handler;
         
         var basename = require("path").basename;
         var ENABLED = c9.location.indexOf("mount=0") == -1;
@@ -215,6 +217,8 @@ define(function(require, exports, module) {
                 if (err) {
                     if (err == CANCELERROR)
                         return done(err);
+                    
+                    errorHandler.log(new Error("Failed to create mount"), {mountError: err, options: options})
                     
                     var word = remount ? "refresh" : "create";
                     if (err.code == "EINSTALL") {
