@@ -126,7 +126,7 @@ define(function(require, exports, module) {
                     var fuseOptions = ["auto_cache", "transform_symlinks"]; //"direct_io" "allow_other", 
                     // if (c9.platform == "linux")
                     //     fuseOptions.push("nonempty");
-                    mountpoint.replace(/^~/, c9.home);
+                    mountpoint = mountpoint.replace(/^~/, c9.home);
                     mnt.progress({ caption: "Mounting..." });
                     proc.spawn(FTPFS, {
                         args: [
