@@ -219,7 +219,7 @@ define(function(require, exports, module) {
                     if (err == CANCELERROR)
                         return done(err);
                     
-                    errorHandler.log(new Error("Failed to create mount"), {mountError: err, options: options})
+                    errorHandler.log(new Error("Failed to create mount"), {mountError: err, type: type, args: args, isActive: isActive, remount: remount})
                     
                     var word = remount ? "refresh" : "create";
                     if (err.code == "EINSTALL") {

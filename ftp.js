@@ -16,7 +16,7 @@ define(function(require, exports, module) {
         var metrics = imports.metrics;
         var analytics = imports["c9.analytics"];
         
-        var FTPFS = options.curlftpfsBin || "curlftpfs";
+        var FTPFS = options.ssh ? "curlftpfs" : (options.curlftpfsBin || "curlftpfs");
         var FUSERMOUNT = options.fusermountBin || "fusermount";
         
         /***** Initialization *****/
@@ -153,7 +153,7 @@ define(function(require, exports, module) {
                             else 
                                 data += chunk;
                         });
-                        child.on("exit", function(){
+                        child.on("exit", function(code){
                             var err;
                             
                             activeProcess = [null, mountpoint];
@@ -162,18 +162,23 @@ define(function(require, exports, module) {
                                 err = new Error("curlftpfs");
                                 err.code = "EINSTALL";
                             }
-                            else if (data.indexOf("No such file or directory") > -1)
+                            else if (data.indexOf("No such file or directory") > -1) {
                                 err = new Error("Invalid Directory: " + args.remote);
-                            
+                            } 
                             else if (data.indexOf("Access denied") > -1) {
                                 err = new Error("Authentication Failed : " + data);
                                 err.code = "EACCESS";
+                            } 
+                            else if (code == 127) {
+                                err = new Error("You need to install " + FTPFS + " on your server to mount ftp");
                             }
-                            else if (data)
+                            else if (data) {
                                 err = new Error(data);
+                            }
                             
-                            if (err)
+                            if (err) {
                                 return callback(err);
+                            }
                             
                             mnt.progress({ caption: "Verifying..." });
                             verify(mountpoint, function(err){
