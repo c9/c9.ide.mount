@@ -88,19 +88,23 @@ define(function(require, exports, module) {
             });
         }
         
+        function getArgsFromUI() {
+            var name = tbFTPMountPoint.getValue().trim() || tbFTPHost.getValue().trim();
+            var args = {
+                user: tbFTPUser.getValue().trim(),
+                pass: tbFTPPass.getValue().trim(),
+                host: tbFTPHost.getValue().trim(),
+                remote: tbFTPRemote.getValue().trim(),
+                mountpoint: "~/mounts/" + name,
+                port: tbFTPPort.getValue().trim()
+            };
+            
+            return args;
+        }
+        
         function mount(args, callback){
             if (args.fromUI) {
-                var name = tbFTPMountPoint.getValue().trim()
-                    || tbFTPHost.getValue().trim();
-                
-                args = {
-                    user: tbFTPUser.getValue().trim(),
-                    pass: tbFTPPass.getValue().trim(),
-                    host: tbFTPHost.getValue().trim(),
-                    remote: tbFTPRemote.getValue().trim(),
-                    mountpoint: "~/mounts/" + name,
-                    port: tbFTPPort.getValue().trim()
-                };
+                args = getArgsFromUI();
             }
             
             //Encode "@" as curlftpfs doesn't likes it raw.
@@ -264,6 +268,11 @@ define(function(require, exports, module) {
              * 
              */
             cancel: cancel,
+            
+            /**
+             * 
+             */
+            getArgsFromUI: getArgsFromUI,
             
             /**
              * 
