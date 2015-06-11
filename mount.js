@@ -99,7 +99,7 @@ define(function(require, exports, module) {
                 bindKey: { mac: "Command-Option-B", win: "" },
                 exec: function(editor, args) {
                     if (args.type) {
-                        startMount(args.type, args);
+                        mount(args.type, args);
                     }
                     else show();
                 }
@@ -170,7 +170,7 @@ define(function(require, exports, module) {
         
         function create(){
             if (active.plugin.validate())
-                startMount(active.name);
+                mount(null, null, true);
         }
         
         function progress(options){
@@ -195,23 +195,6 @@ define(function(require, exports, module) {
                 loading.lastChild.innerHTML = options.caption;
         }
         
-        function startMount(type) {
-            // Get the arguments here as we want whatever arguments were filled out passed to sftp then ftp.
-            var plugin = sections[type].plugin;
-            var args = plugin.getArgsFromUI();
-            
-            // Attempt to mount sftp first, if that fails mount with ftp
-            mount("sftp", _.extend({}, args, {port: 22}), null, function (err) {
-                if (err) {
-                    // sftp mounting failed, lets try again with our original mount type if it wasn't sftp 
-                    if (type !== "sftp") {
-                        mount(type, args, null, null, false);
-                    }
-                }
-            }, false);
-        }
-      
-      
         function mount(type, args, isActive, callback, remount){
             var section = isActive ? active : sections[type]; 
             var plugin = section.plugin;
