@@ -84,23 +84,27 @@ define(function(require, exports, module) {
             });
         }
         
+        function getArgsFromUI() {
+            var name = tbSFTPMountPoint.getValue().trim() || tbSFTPHost.getValue().trim();
+            var args = {
+                user: tbSFTPUser.getValue().trim(),
+                pass: tbSFTPPass.getValue().trim(),
+                host: tbSFTPHost.getValue().trim(),
+                remote: tbSFTPRemote.getValue().trim(),
+                mountpoint: "~/mounts/" + name,
+                port: tbSFTPPort.getValue().trim()
+            };
+            
+            return args;
+        }
+        
         function mount(args, callback){
             if (args.fromUI) {
-                var name = tbSFTPMountPoint.getValue().trim() 
-                    || tbSFTPHost.getValue().trim();
-                    
-                args = {
-                    user: tbSFTPUser.getValue().trim(),
-                    host: tbSFTPHost.getValue().trim(),
-                    remote: tbSFTPRemote.getValue().trim(),
-                    mountpoint: "~/mounts/" + name,
-                    password: tbSFTPPass.getValue().trim(),
-                    port: tbSFTPPort.getValue().trim()
-                };
+                
             }
             
             //Encode "@" as curlftpfs doesn't likes it raw.
-            args.password = args.password.replace(/@/g, "%40");
+            args.pass = args.pass.replace(/@/g, "%40");
             args.user = args.user.replace(/@/g, "%40");
             
             // Reset cancelled state
@@ -131,7 +135,7 @@ define(function(require, exports, module) {
                     
                     // if (c9.platform == "linux")
                     //     fuseOptions.push("nonempty");
-                    if (args.password)
+                    if (args.pass)
                         fuseOptions.push("password_stdin");
                     else
                         fuseOptions.push("PasswordAuthentication=no");
@@ -150,8 +154,8 @@ define(function(require, exports, module) {
                         
                         activeProcess = [child, mountpoint];
                         
-                        if (args.password)
-                            child.stdin.write(args.password + "\n");
+                        if (args.pass)
+                            child.stdin.write(args.pass + "\n");
                         child.stdin.end();
                         
                         var data = "";
@@ -279,6 +283,11 @@ define(function(require, exports, module) {
              * 
              */
             cancel: cancel,
+            
+            /**
+             * 
+             */
+            getArgsFromUI: getArgsFromUI,
             
             /**
              * 
