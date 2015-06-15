@@ -199,9 +199,14 @@ define(function(require, exports, module) {
             // Get the arguments here as we want whatever arguments were filled out passed to sftp then ftp.
             var plugin = sections[type].plugin;
             var args = plugin.getArgsFromUI();
+            var sftpArgs = {};
+            for (var arg in args) {
+                sftpArgs[arg] = args[arg];
+            }
+            sftpArgs.port = 22;
             
             // Attempt to mount sftp first, if that fails mount with ftp
-            mount("sftp", _.extend({}, args, {port: 22}), null, function (err) {
+            mount("sftp", sftpArgs, null, function (err) {
                 if (err) {
                     // sftp mounting failed, lets try again with our original mount type if it wasn't sftp 
                     if (type !== "sftp") {
