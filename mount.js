@@ -23,6 +23,7 @@ define(function(require, exports, module) {
         var analytics = imports["c9.analytics"];
         var basename = require("path").basename;
         var ENABLED = c9.location.indexOf("mount=0") == -1;
+        var _ = require("lodash");
         
         /***** Initialization *****/
         
@@ -199,13 +200,10 @@ define(function(require, exports, module) {
             // Get the arguments here as we want whatever arguments were filled out passed to sftp then ftp.
             var plugin = sections[type].plugin;
             var args = plugin.getArgsFromUI();
-            var sftpArgs = {};
-            for (var arg in args) {
-                sftpArgs[arg] = args[arg];
-            }
-            sftpArgs.port = 22;
             
             // Attempt to mount sftp first, if that fails mount with ftp
+            var sftpArgs = _.extend({}, args, {port: 22});
+            
             mount("sftp", sftpArgs, null, function (err) {
                 if (err) {
                     // sftp mounting failed, lets try again with our original mount type if it wasn't sftp 
