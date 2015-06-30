@@ -201,17 +201,20 @@ define(function(require, exports, module) {
             var plugin = sections[type].plugin;
             var args = plugin.getArgsFromUI();
             
-            // Attempt to mount sftp first, if that fails mount with ftp
-            var sftpArgs = _.extend({}, args, {port: 22});
             
-            mount("sftp", sftpArgs, null, function (err) {
-                if (err) {
-                    // sftp mounting failed, lets try again with our original mount type if it wasn't sftp 
-                    if (type !== "sftp") {
+            // If we are mounting ftp on port 21 attempt to mount sftp first, if that fails mount with ftp
+            if (type == "ftp" && args.port == 21) {
+                var sftpArgs = _.extend({}, args, {port: 22});
+                mount("sftp", sftpArgs, null, function (err) {
+                    if (err) {
+                        // sftp mounting failed, lets try again with our original mount type
                         mount(type, args, null, null, false);
                     }
-                }
-            }, false);
+                }, false);
+            }
+            else {
+                mount(type, args, null, null, false);
+            }
         }
       
       
