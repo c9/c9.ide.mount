@@ -487,7 +487,7 @@ define(function(require, exports, module) {
             
             function show(options) {
                 draw();
-                container.appendChild(htmlPage);
+                container.host.appendChild(htmlPage.host);
             }
             
             /***** Register and define API *****/
