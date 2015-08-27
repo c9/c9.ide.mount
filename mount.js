@@ -203,7 +203,7 @@ define(function(require, exports, module) {
             
             
             // If we are mounting ftp on port 21 attempt to mount sftp first, if that fails mount with ftp
-            if (type == "ftp" && args.port == 21) {
+            if (type == "ftp" && (args.port == 21 || args.port == 22)) {
                 var sftpArgs = _.extend({}, args, {port: 22});
                 mount("sftp", sftpArgs, null, function (err) {
                     if (err) {
