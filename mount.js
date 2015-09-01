@@ -24,7 +24,14 @@ define(function(require, exports, module) {
         var basename = require("path").basename;
         var ENABLED = c9.location.indexOf("mount=0") == -1;
         var _ = require("lodash");
-        var oberr = require("oberr");
+        
+        var oberr = function(err) {
+            var ob = {};
+            Object.getOwnPropertyNames(err).forEach(function(key) {
+                ob[key] = err[key];
+            });
+            return ob;
+        };
         
         /***** Initialization *****/
         
@@ -209,12 +216,12 @@ define(function(require, exports, module) {
                 mount("sftp", sftpArgs, {silent: true}, function (err) {
                     if (err) {
                         // sftp mounting failed, lets try again with our original mount type
-                        mount(type, args, null, null);
+                        mount(type, args);
                     }
                 });
             }
             else {
-                mount(type, args, null, null);
+                mount(type, args);
             }
         }
       
@@ -246,7 +253,7 @@ define(function(require, exports, module) {
                     if (err == CANCELERROR)
                         return done(err);
                     
-                    errorHandler.log(new Error("Failed to create mount"), {mountError: oberr(err), type: type, args: args, isActive: isActive, remount: remount})
+                    errorHandler.log(new Error("Failed to create mount"), {mountError: oberr(err), type: type, args: args, options: options})
                     
                     var word = remount ? "refresh" : "create";
                     if (err.code == "EINSTALL") {
