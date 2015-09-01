@@ -24,6 +24,7 @@ define(function(require, exports, module) {
         var basename = require("path").basename;
         var ENABLED = c9.location.indexOf("mount=0") == -1;
         var _ = require("lodash");
+        var oberr = require("oberr");
         
         /***** Initialization *****/
         
@@ -127,13 +128,13 @@ define(function(require, exports, module) {
                             if (!err) return;
                             
                             // Mount doesn't exist anymore, let's create it
-                            mount(node.mountType, options, false, function(err){
+                            mount(node.mountType, options, {remount: true}, function(err){
                                 if (err) return;
                                 
                                 tree.refresh([node], function(){
                                     tree.expand(node);
                                 });
-                            }, true); // This is a remount
+                            });
                         }, -1); // Only test once
                     }
                 }
@@ -205,21 +206,24 @@ define(function(require, exports, module) {
             // If we are mounting ftp on port 21 attempt to mount sftp first, if that fails mount with ftp
             if (type == "ftp" && (args.port == 21 || args.port == 22)) {
                 var sftpArgs = _.extend({}, args, {port: 22});
-                mount("sftp", sftpArgs, null, function (err) {
+                mount("sftp", sftpArgs, {silent: true}, function (err) {
                     if (err) {
                         // sftp mounting failed, lets try again with our original mount type
-                        mount(type, args, null, null, false);
+                        mount(type, args, null, null);
                     }
-                }, false);
+                });
             }
             else {
-                mount(type, args, null, null, false);
+                mount(type, args, null, null);
             }
         }
       
       
-        function mount(type, args, isActive, callback, remount){
-            var section = isActive ? active : sections[type]; 
+        function mount(type, args, options, callback){
+            options = options || {};
+            var remount = !!options.remount;
+            var silent = !!options.silent;
+            var section = sections[type]; 
             var plugin = section.plugin;
             
             if (!args)
@@ -242,12 +246,12 @@ define(function(require, exports, module) {
                     if (err == CANCELERROR)
                         return done(err);
                     
-                    errorHandler.log(new Error("Failed to create mount"), {mountError: err, type: type, args: args, isActive: isActive, remount: remount})
+                    errorHandler.log(new Error("Failed to create mount"), {mountError: oberr(err), type: type, args: args, isActive: isActive, remount: remount})
                     
                     var word = remount ? "refresh" : "create";
                     if (err.code == "EINSTALL") {
                         analytics.log("Was asked to install package before mounting");
-                        alert("Failed to " + word + " an " + section.name + " Mount",
+                        !silent && alert("Failed to " + word + " an " + section.name + " Mount",
                             "Please install the " + err.message + " package",
                             "Install the package on an ubuntu system using "
                                 + "sudo apt-get install " + err.message 
@@ -256,13 +260,13 @@ define(function(require, exports, module) {
                                 + "Please try again after installing this package.");
                     }
                     else if (err.code == "EACCESS") {
-                        alert("Failed to " + word.toUpperCase() + " an " + section.name.toUpperCase() + " Mount",
+                        !silent && alert("Failed to " + word.toUpperCase() + " an " + section.name.toUpperCase() + " Mount",
                             "Please verify your Username/Password",
                             err.message);
                     }
                     else {
                         metrics.increment("mount.failed");
-                        alert("Failed to " + word.toUpperCase() + " an " + section.name.toUpperCase() + " Mount",
+                        !silent && alert("Failed to " + word.toUpperCase() + " an " + section.name.toUpperCase() + " Mount",
                             "An error occurred while creating the mount:",
                             err.message);
                     }
@@ -295,8 +299,8 @@ define(function(require, exports, module) {
             });
         }
         
-        function unmount(type, args, isActive, callback){
-            var plugin = isActive ? active.plugin : sections[type].plugin;
+        function unmount(type, args, options, callback){
+            var plugin = sections[type].plugin;
             
             plugin.unmount(args, function(){
                 handle.hide();
