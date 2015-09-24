@@ -88,6 +88,10 @@ define(function(require, exports, module) {
             });
         }
         
+        function getSanitizedMountPath(name) {
+            return name.replace(/ /g, "_").replace(/[^a-zA-Z0-9_]/g, "");
+        }
+        
         function getArgsFromUI() {
             var name = tbFTPMountPoint.getValue().trim() || tbFTPHost.getValue().trim();
             var args = {

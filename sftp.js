@@ -84,6 +84,10 @@ define(function(require, exports, module) {
             });
         }
         
+        function getSanitizedMountPath(name) {
+            return name.replace(/ /g, "_").replace(/[^a-zA-Z0-9_]/g, "");
+        }
+        
         function getArgsFromUI() {
             var name = tbSFTPMountPoint.getValue().trim() || tbSFTPHost.getValue().trim();
             var args = {
@@ -91,7 +95,7 @@ define(function(require, exports, module) {
                 pass: tbSFTPPass.getValue().trim(),
                 host: tbSFTPHost.getValue().trim(),
                 remote: tbSFTPRemote.getValue().trim(),
-                mountpoint: "~/mounts/" + name.replace(/ /g, "_"),
+                mountpoint: "~/mounts/" + getSanitizedMountPath(name),
                 port: tbSFTPPort.getValue().trim()
             };
             
