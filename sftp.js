@@ -91,7 +91,7 @@ define(function(require, exports, module) {
                 pass: tbSFTPPass.getValue().trim(),
                 host: tbSFTPHost.getValue().trim(),
                 remote: tbSFTPRemote.getValue().trim(),
-                mountpoint: "~/mounts/" + name,
+                mountpoint: "~/mounts/" + name.replace(" ", "_"),
                 port: tbSFTPPort.getValue().trim()
             };
             
