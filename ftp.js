@@ -99,7 +99,7 @@ define(function(require, exports, module) {
                 pass: tbFTPPass.getValue().trim(),
                 host: tbFTPHost.getValue().trim(),
                 remote: tbFTPRemote.getValue().trim(),
-                mountpoint: "~/mounts/" + name.replace(/ /g, "_"),
+                mountpoint: "~/mounts/" + getSanitizedMountPath(name),
                 port: tbFTPPort.getValue().trim()
             };
             
