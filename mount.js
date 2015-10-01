@@ -2,7 +2,7 @@ define(function(require, exports, module) {
     main.consumes = [
         "Plugin", "ui", "layout", "commands", "Dialog", "menus", 
         "dialog.alert", "tree.favorites", "tree", "c9", "fs.cache",
-        "metrics", "c9.analytics", "error_handler", "oberr"
+        "metrics", "c9.analytics", "error_handler"
     ];
     main.provides = ["mount", "MountTab"];
     return main;
