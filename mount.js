@@ -2,7 +2,7 @@ define(function(require, exports, module) {
     main.consumes = [
         "Plugin", "ui", "layout", "commands", "Dialog", "menus", 
         "dialog.alert", "tree.favorites", "tree", "c9", "fs.cache",
-        "metrics", "c9.analytics", "error_handler"
+        "metrics", "c9.analytics", "error_handler", "oberr"
     ];
     main.provides = ["mount", "MountTab"];
     return main;
@@ -24,14 +24,7 @@ define(function(require, exports, module) {
         var basename = require("path").basename;
         var ENABLED = c9.location.indexOf("mount=0") == -1;
         var _ = require("lodash");
-        
-        var oberr = function(err) {
-            var ob = {};
-            Object.getOwnPropertyNames(err).forEach(function(key) {
-                ob[key] = err[key];
-            });
-            return ob;
-        };
+        var oberr = require("c9/oberr");
         
         /***** Initialization *****/
         
