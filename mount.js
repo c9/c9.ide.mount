@@ -2,7 +2,8 @@ define(function(require, exports, module) {
     main.consumes = [
         "Plugin", "ui", "layout", "commands", "Dialog", "menus", 
         "dialog.alert", "tree.favorites", "tree", "c9", "fs.cache",
-        "metrics", "c9.analytics", "error_handler"
+        "metrics", "c9.analytics", "error_handler", "preferences.experimental",
+        "settings", "info"
     ];
     main.provides = ["mount", "MountTab"];
     return main;
@@ -13,6 +14,7 @@ define(function(require, exports, module) {
         var c9 = imports.c9;
         var ui = imports.ui;
         var tree = imports.tree;
+        var info = imports.info;
         var commands = imports.commands;
         var menus = imports.menus;
         var favs = imports["tree.favorites"];
@@ -21,8 +23,10 @@ define(function(require, exports, module) {
         var errorHandler = imports.error_handler;
         var metrics = imports.metrics;
         var analytics = imports["c9.analytics"];
+        var experimental = imports["preferences.experimental"];
         var basename = require("path").basename;
-        var ENABLED = c9.location.indexOf("mount=0") == -1;
+        var settings = imports.settings;
+        var GRANDFATHERED_USER_DATE = new Date("2015-11-15").getTime();
         var _ = require("lodash");
         var oberr = require("c9/oberr");
         
@@ -94,23 +98,6 @@ define(function(require, exports, module) {
             if (loaded) return false;
             loaded = true;
             
-            if (!ENABLED) return;
-            
-            commands.addCommand({
-                name: "mount",
-                bindKey: { mac: "Command-Option-B", win: "" },
-                exec: function(editor, args) {
-                    if (args.type) {
-                        startMount(args.type, args);
-                    }
-                    else show();
-                }
-            }, handle);
-            
-            menus.addItemByPath("File/Mount FTP or SFTP server...", new ui.item({
-                command: "mount"
-            }), 1250, handle);
-            
             favs.on("favoriteRemove", function(e){
                 if (e.node.mountType)
                     unmount(e.node.mountType, { path: e.node.path });
@@ -144,7 +131,7 @@ define(function(require, exports, module) {
                 var caption = e.node && e.node.mountType
                     ? "Remove Mount"
                     : "Remove from Favorites";
-                    
+                
                 e.menu.childNodes.some(function(item) {
                     if (item.command == "removefavorite") {
                         item.setAttribute("caption", caption);
@@ -160,9 +147,63 @@ define(function(require, exports, module) {
             //         command: "mount"
             //     }), 1030, handle);
             // });
+            loadUI();
+        }
+        
+        function loadUI() {
+            settings.on("read", function(){
+                settings.setDefaults("user/mount", [
+                    ["grandfathered-shown", false],
+                ]);
+            }, handle);
+            
+            var isGrandfatheredShown = settings.get("user/mount/grandfathered-shown");
+            if (!isExperimentEnabled() && (!isGrandfatheredUser() || isGrandfatheredShown))
+                return;
+            
+            commands.addCommand({
+                name: "mount",
+                bindKey: { mac: "Command-Option-B", win: "" },
+                exec: function(editor, args) {
+                    checkGrandfatheredUser(function() {
+                        if (args.type) {
+                            startMount(args.type, args);
+                        }
+                        else show();
+                    });
+                }
+            }, handle);
+            
+            menus.addItemByPath("File/Mount FTP or SFTP server...", new ui.item({
+                command: "mount"
+            }), 1250, handle);
         }
         
         /***** Methods *****/
+        
+        function checkGrandfatheredUser(useFeature) {
+            if (!isGrandfatheredUser() || isExperimentEnabled())
+                return useFeature();
+            
+            // Disable the feature next session
+            settings.set("user/mount/grandfathered-shown", true);
+            
+            alert(
+                "Mount",
+                "The mount feature is experimental.",
+                "Please enable this feature first in <b>Cloud9 &gt; Preferences &gt; Experimental</b>.",
+                null,
+                { isHTML: true }
+            );
+        }
+        
+        function isGrandfatheredUser() {
+            return info.getUser().date_add < GRANDFATHERED_USER_DATE;
+        }
+        
+        function isExperimentEnabled() {
+            return experimental.addExperiment("mount", false, "Mounting/(S)FTP Mounting");
+        }
         
         function cancel(){
             handle.hide();
