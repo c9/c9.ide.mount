@@ -190,8 +190,10 @@ define(function(require, exports, module) {
             
             alert(
                 "Mount",
-                "The mount feature is experimental.",
-                "Please enable this feature first in <b>Cloud9 &gt; Preferences &gt; Experimental</b>.",
+                "The Mount feature is considered experimental.",
+                "We introduced a new preferences panel for experimental features! "
+                + "To try the Mount feature or any other of our experiments, "
+                + "please enable it feature first in <b>Cloud9 &gt; Preferences &gt; Experimental</b>.",
                 null,
                 { isHTML: true }
             );
