@@ -204,7 +204,7 @@ define(function(require, exports, module) {
         }
         
         function isExperimentEnabled() {
-            return experimental.addExperiment("mount", false, "Files/(S)FTP Mounting");
+            return experimental.addExperiment("mount", false, "Mounting/(S)FTP Mounting");
         }
         
         function cancel(){
