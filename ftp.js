@@ -111,9 +111,10 @@ define(function(require, exports, module) {
                 args = getArgsFromUI();
             }
             
-            //Encode "@" and "," as curlftpfs doesn't likes them raw.
-            args.user = args.user.replace(/@/g, "%40").replace(/,/g, "%2C");
-            args.pass = args.pass.replace(/@/g, "%40").replace(/,/g, "%2C");
+            
+            // Encode "@" and "," as curlftpfs doesn't like them raw.
+            args.user = args.user.replace(/[@,]/g, encodeURIComponent);
+            args.pass = args.pass.replace(/[@,]/g, encodeURIComponent);
             
             // Reset cancelled state
             cancelled = false;
