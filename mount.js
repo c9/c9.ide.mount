@@ -260,7 +260,10 @@ define(function(require, exports, module) {
                 mount(type, args);
             }
         }
-      
+        
+        function sanitizeLoginInformation(loginInformation) {
+            return loginInformation.replace(/[@,]/g, encodeURIComponent);
+        }
       
         function mount(type, args, options, callback){
             options = options || {};
@@ -281,6 +284,9 @@ define(function(require, exports, module) {
                 delete mounting[args.mountpoint];
                 callback && callback(err);
             }
+            
+            args.user = sanitizeLoginInformation(args.user);
+            args.pass = sanitizeLoginInformation(args.pass);
             
             plugin.mount(args, function(err, options){
                 progress({ complete: true });
@@ -475,6 +481,8 @@ define(function(require, exports, module) {
                  */
                 "activate",
             ],
+            
+            sanitizeLoginInformation: sanitizeLoginInformation,
             
             /**
              * 

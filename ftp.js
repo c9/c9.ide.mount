@@ -111,15 +111,10 @@ define(function(require, exports, module) {
                 args = getArgsFromUI();
             }
             
-            
-            // Encode "@" and "," as curlftpfs doesn't like them raw.
-            args.user = args.user.replace(/[@,]/g, encodeURIComponent);
-            args.pass = args.pass.replace(/[@,]/g, encodeURIComponent);
-            
             // Reset cancelled state
             cancelled = false;
             
-            var host = "ftp://" + args.user + ":" + args.pass 
+            var host = "ftp://" + args.user + ":" + args.pass
                 + "@" + args.host + (args.port ? ":" + args.port : "")
                 + args.remote;
             var mountpoint = args.mountpoint;
