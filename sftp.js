@@ -186,13 +186,9 @@ define(function(require, exports, module) {
                             else if (code == 127) {
                                 err = new Error("You need to install " + SFTPFS + " on your server to mount sftp");
                             } 
-                            else if (data) {
-                                err = new Error(data);
-                            }
                             
-                            if (err) {
+                            if (err)
                                 return callback(err);
-                            }
                             
                             mnt.progress({ caption: "Verifying..." });
                             verify(mountpoint, function(err){
