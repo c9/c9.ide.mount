@@ -176,6 +176,9 @@ define(function(require, exports, module) {
                             else if (code == 127) {
                                 err = new Error("You need to install " + FTPFS + " on your server to mount ftp");
                             }
+                            else if (code && data) {
+                                err = new Error(data);
+                            }
                             
                             if (err)
                                 return callback(err);
