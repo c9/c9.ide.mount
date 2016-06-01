@@ -103,27 +103,25 @@ define(function(require, exports, module) {
                     unmount(e.node.mountType, { path: e.node.path });
             });
             
-            fsCache.on("readdir", function(e){
-                var node = favs.isFavoritePath(e.path);
+            favs.favorites.forEach(function (path) {
+                var node = favs.isFavoritePath(path);
                 if (node && node.mountType) {
-                    if (!Object.keys(e.parent.map).length) {
-                        var options = node.mountOptions;
-                        var plugin = (sections[node.mountType] || 1).plugin;
-                        if (!plugin) return; // Do Nothing
+                    var options = node.mountOptions;
+                    var plugin = (sections[node.mountType] || 1).plugin;
+                    if (!plugin) return; // Do Nothing
+                    
+                    plugin.verify(options.mountpoint, function(err){
+                        if (!err) return;
                         
-                        plugin.verify(options.mountpoint, function(err){
-                            if (!err) return;
+                        // Mount doesn't exist anymore, let's create it
+                        mount(node.mountType, options, {remount: true}, function(err){
+                            if (err) return;
                             
-                            // Mount doesn't exist anymore, let's create it
-                            mount(node.mountType, options, {remount: true}, function(err){
-                                if (err) return;
-                                
-                                tree.refresh([node], function(){
-                                    tree.expand(node);
-                                });
+                            tree.refresh([node], function(){
+                                tree.expand(node);
                             });
-                        }, -1); // Only test once
-                    }
+                        });
+                    }, -1); // Only test once
                 }
             });
             
