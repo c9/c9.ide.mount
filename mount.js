@@ -430,6 +430,8 @@ define(function(require, exports, module) {
                         });
                     });
                 }, -1); // Only test once
+                
+                return false; // Ensure this is removed from existingMounts array
             });
         }
         
