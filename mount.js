@@ -110,6 +110,7 @@ define(function(require, exports, module) {
                     var options = node.mountOptions;
                     
                     existingMounts.push(node);
+                    node.status = "loading";
                 }
             });
             
