@@ -54,6 +54,7 @@ define(function(require, exports, module) {
         var sections = []; sections.lowest = 100000;
         var mounting = {};
         var container, box, active, loading;
+        var existingMounts = [];
         
         var drawn = false;
         function draw(options) {
@@ -107,21 +108,8 @@ define(function(require, exports, module) {
                 var node = favs.isFavoritePath(path);
                 if (node && node.mountType) {
                     var options = node.mountOptions;
-                    var plugin = (sections[node.mountType] || 1).plugin;
-                    if (!plugin) return; // Do Nothing
                     
-                    plugin.verify(options.mountpoint, function(err){
-                        if (!err) return;
-                        
-                        // Mount doesn't exist anymore, let's create it
-                        mount(node.mountType, options, {remount: true}, function(err){
-                            if (err) return;
-                            
-                            tree.refresh([node], function(){
-                                tree.expand(node);
-                            });
-                        });
-                    }, -1); // Only test once
+                    existingMounts.push(node);
                 }
             });
             
@@ -366,6 +354,8 @@ define(function(require, exports, module) {
                 sections[section.name] = section;
             };
             
+            initializeExistingMounts(section);
+            
             if (!drawn) {
                 handle.on("draw", addSection.bind(null, options, plugin, section));
                 return;
@@ -388,6 +378,7 @@ define(function(require, exports, module) {
                 sections.lowest = options.index;
                 activate(section);
             }
+            
             
             return section;
         }
@@ -415,6 +406,29 @@ define(function(require, exports, module) {
                     node.focus();
                     return true;
                 }
+            });
+        }
+        
+        function initializeExistingMounts(section) {
+            existingMounts = existingMounts.filter(function (node) {
+                if (node.mountType != section.name) return true;
+                
+                var options = node.mountOptions;
+                var plugin = (sections[node.mountType] || 1).plugin;
+                if (!plugin) return; // Do Nothing
+                
+                plugin.verify(options.mountpoint, function(err){
+                    if (!err) return;
+                    
+                    // Mount doesn't exist anymore, let's create it
+                    mount(node.mountType, options, {remount: true}, function(err){
+                        if (err) return;
+                        
+                        tree.refresh([node], function(){
+                            tree.expand(node);
+                        });
+                    });
+                }, -1); // Only test once
             });
         }
         
