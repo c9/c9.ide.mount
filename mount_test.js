@@ -62,7 +62,6 @@ require(["lib/architect/architect", "lib/chai/chai", "events"],
                 var pluginExistingMounts = mount.existingMounts;
                 expect(pluginExistingMounts.length).to.equal(1);
                 expect(pluginExistingMounts[0].mountType).to.equal("sftp");
-                console.log("pluginExistingMounts: ", pluginExistingMounts);
             });
         });
         
