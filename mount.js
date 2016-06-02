@@ -107,8 +107,6 @@ define(function(require, exports, module) {
             favs.favorites.forEach(function (path) {
                 var node = favs.isFavoritePath(path);
                 if (node && node.mountType) {
-                    var options = node.mountOptions;
-                    
                     existingMounts.push(node);
                     node.status = "loading";
                 }
@@ -472,6 +470,10 @@ define(function(require, exports, module) {
         
         /***** Register and define API *****/
         
+        if (options.testing) {
+            Object.defineProperty(handle, "existingMounts", { get: function() { return existingMounts; }});
+        }
+        
         /**
          * 
          */
@@ -512,7 +514,7 @@ define(function(require, exports, module) {
             /**
              * 
              */
-            error: error
+            error: error,
         });
         
         function MountTab(developer, consumes, options) {
