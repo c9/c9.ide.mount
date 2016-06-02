@@ -413,10 +413,9 @@ define(function(require, exports, module) {
                 if (node.mountType != section.name) return true;
                 
                 var options = node.mountOptions;
-                var plugin = (sections[node.mountType] || 1).plugin;
-                if (!plugin) return; // Do Nothing
+                if (!section.plugin) return;
                 
-                plugin.verify(options.mountpoint, function(err){
+                section.plugin.verify(options.mountpoint, function(err){
                     if (!err) return;
                     
                     // Mount doesn't exist anymore, let's create it
