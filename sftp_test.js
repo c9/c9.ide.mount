@@ -9,14 +9,6 @@ require(["lib/architect/architect", "lib/chai/chai"],
     expect.setupArchitectTest([
        
         "plugins/c9.core/ext",
-        {
-            consumes: ["Plugin"],
-            provides: [
-                "c9", "tabManager", "MountTab", "proc", "mount", "fs", 
-                "metrics", "c9.analytics", "error_handler", "ui"
-            ],
-            setup: expect.html.mocked
-        },
         "plugins/c9.ide.mount/sftp",
         {
             consumes: ["c9", "mount.sftp"],
@@ -29,7 +21,10 @@ require(["lib/architect/architect", "lib/chai/chai"],
         var sftp = imports["mount.sftp"];
 
         describe("sftp", function() {
-            
+            it("should provide mount interface", function() {
+                expect(sftp.mount).ok;
+                expect(sftp.verify).ok;
+            });
         });
         
         

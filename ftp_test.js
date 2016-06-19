@@ -9,14 +9,6 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
     expect.setupArchitectTest([
        
         "plugins/c9.core/ext",
-        {
-            consumes: ["Plugin"],
-            provides: [
-                "c9", "tabManager", "MountTab", "proc", "mount", "fs", 
-                "metrics", "c9.analytics", "error_handler", "ui"
-            ],
-            setup: expect.html.mocked
-        },
         "plugins/c9.ide.mount/ftp",
         {
             consumes: ["c9", "mount.ftp"],
@@ -29,7 +21,10 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
         var ftp = imports["mount.ftp"];
 
         describe("ftp", function() {
-            
+            it("should provide mount interface", function() {
+                expect(ftp.mount).ok;
+                expect(ftp.verify).ok;
+            });
         });
         
         
